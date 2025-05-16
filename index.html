@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMDR Self-Help - Redukuj Napięcie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #121212;
+            color: white;
+            padding: 20px;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 100%;
+            width: 100%;
+            padding: 0 20px;
+        }
+        
+        button {
+            background-color: #9c27b0;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #7b1fa2;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .indicator {
+            width: 50px;
+            height: 50px;
+            background-color: #ff5722;
+            border-radius: 50%;
+            position: absolute;
+            left: 0;
+        }
+        
+        .indicator-container {
+            width: 100%;
+            height: 60px;
+            background-color: #1e1e1e;
+            border-radius: 5px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .timer {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        
+        .rating-button {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background-color: #333;
+            color: white;
+            border-radius: 50%;
+            margin: 5px;
+            cursor: pointer;
+        }
+        
+        .rating-button.selected {
+            background-color: #ff5722;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="startScreen" class="screen active">
+            <h1>EMDR Self-Help</h1>
+            <p style="margin-bottom: 20px;">Narzędzie do szybkiego rozładowania napięcia</p>
+            
+            <div style="background-color: #1e1e1e; padding: 15px; border-radius: 10px; text-align: left; margin-bottom: 20px; line-height: 1.5;">
+                <p><strong>Narzędzie to pomoże Ci:</strong></p>
+                <ul style="list-style-type: none; padding-left: 5px; margin-top: 10px;">
+                    <li>• Przełamać blokady perfekcjonizmu</li>
+                    <li>• Rozładować napięcie przed wymagającymi zadaniami</li>
+                    <li>• Zmniejszyć reaktywność emocjonalną</li>
+                    <li>• Wrócić do stanu równowagi</li>
+                </ul>
+            </div>
+            
+            <p style="font-size: 14px; color: #aaa; margin-bottom: 20px;">Metoda EMDR (Eye Movement Desensitization and Reprocessing) pomaga w przepracowaniu trudnych emocji i odczuć poprzez stymulację bilateralną.</p>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <input type="checkbox" id="soundToggle" checked style="margin-right: 10px; transform: scale(1.5);">
+                    <span>Włącz stymulację dźwiękową</span>
+                </label>
+                <p style="font-size: 12px; color: #aaa; margin-top: 5px;">(dla lepszego efektu używaj słuchawek)</p>
+            </div>
+            
+            <button id="startButton">Rozpocznij sesję</button>
+        </div>
+        
+        <!-- Rating Screen -->
+        <div id="ratingScreen" class="screen">
+            <h1>Przygotowanie do sesji EMDR</h1>
+            
+            <div style="background-color: #1e1e1e; padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 20px; line-height: 1.6;">
+                <h2 style="margin-bottom: 10px;">Instrukcja przed sesją:</h2>
+                
+                <p>1. <strong>Zajmij wygodną pozycję</strong> - usiądź prosto, ale komfortowo.</p>
+                
+                <p>2. <strong>Skup się na problemie</strong> - pomyśl o konkretnej sytuacji, która wywołuje napięcie (np. moment gdy siadasz do retuszu i czujesz presję perfekcjonizmu).</p>
+                
+                <p>3. <strong>Zwróć uwagę na swoje ciało</strong> - gdzie dokładnie czujesz napięcie? W klatce piersiowej? W brzuchu? W ramionach? Zaobserwuj to uczucie.</p>
+                
+                <p>4. <strong>Wyobraź sobie scenę</strong> - przypomnij sobie jak najdokładniej sytuację, która wywołuje niepokój. Jakie obrazy widzisz? Jakie słyszysz głosy? Jakie myśli się pojawiają?</p>
+                
+                <p>5. <strong>Przyjmij to uczucie</strong> - nie walcz z nim, po prostu zaakceptuj że jest obecne.</p>
+            </div>
+            
+            <p>Na skali od 1 do 10, jak silne jest Twoje napięcie związane z tą sytuacją?</p>
+            <div id="ratingButtons">
+                <div class="rating-button" data-value="1">1</div>
+                <div class="rating-button" data-value="2">2</div>
+                <div class="rating-button" data-value="3">3</div>
+                <div class="rating-button" data-value="4">4</div>
+                <div class="rating-button" data-value="5">5</div>
+                <div class="rating-button" data-value="6">6</div>
+                <div class="rating-button" data-value="7">7</div>
+                <div class="rating-button" data-value="8">8</div>
+                <div class="rating-button" data-value="9">9</div>
+                <div class="rating-button" data-value="10">10</div>
+            </div>
+            <button id="beginButton">Rozpocznij ruch wskaźnika</button>
+        </div>
+        
+        <!-- Session Screen -->
+        <div id="sessionScreen" class="screen">
+            <h1>Śledź wzrokiem poruszający się wskaźnik</h1>
+            <div style="margin-bottom: 10px; font-size: 16px;">Utrzymuj głowę nieruchomo. Śledź kulkę tylko oczami.</div>
+            <div class="timer" id="timerDisplay">01:00</div>
+            <div class="indicator-container">
+                <div id="indicator" class="indicator"></div>
+            </div>
+            <p style="margin-top: 20px;">Jednocześnie skup się na odczuciach w ciele i pozwól myślom swobodnie płynąć.</p>
+            <p style="margin-top: 5px; color: #aaa;">Dotknij ekranu aby zatrzymać/wznowić</p>
+            <button id="stopButton">Zakończ sesję</button>
+        </div>
+        
+        <!-- End Screen -->
+        <div id="endScreen" class="screen">
+            <h1>Sesja zakończona</h1>
+            
+            <div style="background-color: #1e1e1e; padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 20px; line-height: 1.6;">
+                <h2 style="margin-bottom: 10px;">Instrukcje po sesji:</h2>
+                
+                <p>1. <strong>Weź głęboki oddech</strong> - wykonaj 3 głębokie wdechy i wydechy.</p>
+                
+                <p>2. <strong>Sprawdź swoje ciało</strong> - zauważ, jak teraz czuje się twoje ciało. Czy napięcie zmieniło miejsce? Czy zmniejszyło się? A może zniknęło?</p>
+                
+                <p>3. <strong>Przypomnij sobie problematyczną sytuację</strong> - spróbuj przywołać tę samą scenę, o której myślałeś na początku. Czy wywołuje te same uczucia?</p>
+                
+                <p>4. <strong>Zauważ zmiany</strong> - czy teraz myślisz o tej sytuacji inaczej? Czy pojawiły się nowe myśli? Jak zmieniły się emocje?</p>
+                
+                <p>5. <strong>Zakotwicz nowy stan</strong> - jeśli czujesz się lepiej, zwróć uwagę na to uczucie. Możesz dotknąć kciukiem i palcem wskazującym, tworząc "kotwicę" dla tego stanu.</p>
+            </div>
+            
+            <p>Jak oceniasz swoje napięcie teraz?</p>
+            <div id="endRatingButtons">
+                <div class="rating-button" data-value="1">1</div>
+                <div class="rating-button" data-value="2">2</div>
+                <div class="rating-button" data-value="3">3</div>
+                <div class="rating-button" data-value="4">4</div>
+                <div class="rating-button" data-value="5">5</div>
+                <div class="rating-button" data-value="6">6</div>
+                <div class="rating-button" data-value="7">7</div>
+                <div class="rating-button" data-value="8">8</div>
+                <div class="rating-button" data-value="9">9</div>
+                <div class="rating-button" data-value="10">10</div>
+            </div>
+            
+            <div style="background-color: #1e1e1e; padding: 15px; border-radius: 10px; text-align: left; margin: 20px 0; line-height: 1.6;">
+                <h3 style="margin-bottom: 10px;">Co zaobserwowałeś podczas sesji?</h3>
+                <p style="font-size: 14px; margin-bottom: 10px; color: #aaa;">Zaznacz wszystkie odpowiedzi, które do Ciebie pasują:</p>
+                
+                <div id="observationsContainer" style="display: flex; flex-direction: column; align-items: flex-start;">
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs1" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs1">Czułem fizyczne rozluźnienie w ciele</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs2" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs2">Zauważyłem zmianę miejsca napięcia w ciele</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs3" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs3">Nie zauważyłem fizycznych zmian</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs4" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs4">Moje myśli stały się spokojniejsze</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs5" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs5">Miałem trudności z utrzymaniem koncentracji</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs6" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs6">Pojawiły się nowe myśli/perspektywy</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs7" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs7">Problem wydaje się teraz mniej ważny</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs8" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs8">Odczuwam większą pewność siebie w kwestii problemu</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs9" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs9">Łatwiej mi myśleć o rozwiązaniach</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs10" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs10">Oddychanie stało się głębsze/spokojniejsze</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs11" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs11">Czuję, że potrzebuję więcej sesji</label>
+                    </div>
+                    
+                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
+                        <input type="checkbox" id="obs12" style="margin-right: 10px; transform: scale(1.3);">
+                        <label for="obs12">Nie zauważyłem żadnych zmian</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="results" style="margin-top: 20px;"></div>
+            
+            <div style="background-color: #1e1e1e; padding: 15px; border-radius: 10px; text-align: left; margin: 20px 0; line-height: 1.6;">
+                <p><strong>Co teraz?</strong></p>
+                <p>• Jeśli napięcie znacznie się zmniejszyło (3+ punktów), możesz przejść do zadania.</p>
+                <p>• Jeśli napięcie zmniejszyło się nieznacznie (1-2 punkty), rozważ przeprowadzenie jeszcze jednej sesji.</p>
+                <p>• Jeśli napięcie nie zmieniło się lub wzrosło, spróbuj zidentyfikować inny aspekt problemu i przeprowadź nową sesję.</p>
+            </div>
+            
+            <button id="newSessionButton">Nowa sesja</button>
+        </div>
+    </div>
+
+    <script>
+        // Czekamy na załadowanie dokumentu
+        window.onload = function() {
+            // Zmienne globalne aplikacji
+            var app = {
+                screens: {
+                    start: document.getElementById('startScreen'),
+                    rating: document.getElementById('ratingScreen'),
+                    session: document.getElementById('sessionScreen'),
+                    end: document.getElementById('endScreen')
+                },
+                buttons: {
+                    start: document.getElementById('startButton'),
+                    begin: document.getElementById('beginButton'),
+                    stop: document.getElementById('stopButton'),
+                    newSession: document.getElementById('newSessionButton')
+                },
+                elements: {
+                    indicator: document.getElementById('indicator'),
+                    timerDisplay: document.getElementById('timerDisplay'),
+                    results: document.getElementById('results'),
+                    soundToggle: document.getElementById('soundToggle')
+                },
+                ratings: {
+                    preButtons: document.querySelectorAll('#ratingButtons .rating-button'),
+                    postButtons: document.querySelectorAll('#endRatingButtons .rating-button')
+                },
+                state: {
+                    timeRemaining: 60,
+                    preRating: null,
+                    postRating: null,
+                    isPaused: false,
+                    timerId: null,
+                    animationId: null,
+                    soundEnabled: true,
+                    audioContext: null
+                }
+            };
+            
+            // Funkcja pokazująca wybrany ekran
+            function showScreen(screenId) {
+                // Ukryj wszystkie ekrany
+                for (var key in app.screens) {
+                    if (app.screens.hasOwnProperty(key)) {
+                        app.screens[key].classList.remove('active');
+                    }
+                }
+                
+                // Pokaż wybrany ekran
+                app.screens[screenId].classList.add('active');
+            }
+            
+            // Funkcja obsługująca timer
+            function startTimer() {
+                app.state.timeRemaining = 60;
+                updateTimerDisplay();
+                
+                app.state.timerId = setInterval(function() {
+                    if (!app.state.isPaused) {
+                        app.state.timeRemaining--;
+                        updateTimerDisplay();
+                        
+                        if (app.state.timeRemaining <= 0) {
+                            endSession();
+                        }
+                    }
+                }, 1000);
+            }
+            
+            // Aktualizacja wyświetlacza timera
+            function updateTimerDisplay() {
+                var minutes = Math.floor(app.state.timeRemaining / 60);
+                var seconds = app.state.timeRemaining % 60;
+                app.elements.timerDisplay.textContent = 
+                    minutes.toString().padStart(2, '0') + ':' + 
+                    seconds.toString().padStart(2, '0');
+            }
+            
+            // Inicjalizacja audio
+            function setupAudio() {
+                // Próbujemy użyć Web Audio API
+                try {
+                    app.state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch(e) {
+                    console.log('Web Audio API nie jest wspierane, używam alternatywnej metody');
+                }
+            }
+            
+            // Funkcja odtwarzająca dźwięk
+            function playSound(isLeft) {
+                // Jeśli dźwięk wyłączony lub pauza - nie odtwarzaj
+                if (!app.state.soundEnabled || app.state.isPaused) return;
+                
+                // Metoda 1: Web Audio API
+                if (app.state.audioContext) {
+                    try {
+                        var oscillator = app.state.audioContext.createOscillator();
+                        var gainNode = app.state.audioContext.createGain();
+                        
+                        // Ustawienia oscylatora
+                        oscillator.type = 'sine';
+                        oscillator.frequency.value = isLeft ? 400 : 500;
+                        
+                        // Głośność
+                        gainNode.gain.value = 0.1;
+                        
+                        // Stworzenie kontekstu stereo
+                        var panNode;
+                        if (app.state.audioContext.createStereoPanner) {
+                            panNode = app.state.audioContext.createStereoPanner();
+                            panNode.pan.value = isLeft ? -1.0 : 1.0; // -1 = lewy, 1 = prawy
+                        } else if (app.state.audioContext.createPanner) {
+                            // Alternatywna metoda dla starszych przeglądarek
+                            panNode = app.state.audioContext.createPanner();
+                            panNode.panningModel = 'equalpower';
+                            panNode.setPosition(isLeft ? -1 : 1, 0, 0);
+                        } else {
+                            // Fallback - bez stereo
+                            panNode = app.state.audioContext.createGain();
+                        }
+                        
+                        // Podłączenia
+                        oscillator.connect(gainNode);
+                        gainNode.connect(panNode);
+                        panNode.connect(app.state.audioContext.destination);
+                        
+                        // Odtwarzanie
+                        oscillator.start();
+                        
+                        // Zatrzymanie po krótkim czasie
+                        setTimeout(function() {
+                            oscillator.stop();
+                            // Odłączenie
+                            try {
+                                oscillator.disconnect();
+                                gainNode.disconnect();
+                                panNode.disconnect();
+                            } catch(e) {
+                                // Ignorujemy ewentualne błędy odłączania
+                            }
+                        }, 50);
+                    } catch(e) {
+                        console.log('Błąd odtwarzania dźwięku:', e);
+                        fallbackSound(isLeft);
+                    }
+                } 
+                // Metoda 2: Element Audio z mono do stereo
+                else {
+                    fallbackSound(isLeft);
+                }
+            }
+            
+            // Alternatywna metoda generowania dźwięku stereo
+            function fallbackSound(isLeft) {
+                try {
+                    // Tworzymy kontekst AudioContext na żądanie
+                    var tempContext = new (window.AudioContext || window.webkitAudioContext)();
+                    var oscillator = tempContext.createOscillator();
+                    var gainNode = tempContext.createGain();
+                    
+                    // Tworzymy kanał stereo
+                    var merger = tempContext.createChannelMerger(2);
+                    
+                    // Głośność
+                    gainNode.gain.value = 0.2;
+                    
+                    // Podłączenia - manipulujemy którym kanałem wysyłamy dźwięk
+                    oscillator.connect(gainNode);
+                    
+                    // Ustawienia częstotliwości
+                    oscillator.frequency.value = isLeft ? 400 : 500;
+                    
+                    if (isLeft) {
+                        // Lewy kanał
+                        gainNode.connect(merger, 0, 0);
+                    } else {
+                        // Prawy kanał
+                        gainNode.connect(merger, 0, 1);
+                    }
+                    
+                    merger.connect(tempContext.destination);
+                    
+                    // Odtwarzamy
+                    oscillator.start();
+                    
+                    // Zatrzymujemy po krótkim czasie
+                    setTimeout(function() {
+                        oscillator.stop();
+                        // Odłączamy
+                        try {
+                            oscillator.disconnect();
+                            gainNode.disconnect();
+                            merger.disconnect();
+                        } catch(e) {
+                            // Ignorujemy ewentualne błędy odłączania
+                        }
+                        
+                        // Zamykamy kontekst
+                        try {
+                            if (tempContext.close) {
+                                tempContext.close();
+                            }
+                        } catch(e) {
+                            // Ignorujemy błędy zamykania
+                        }
+                    }, 50);
+                } catch(e) {
+                    console.log('Fallback audio też nie działa:', e);
+                    // Ostateczny fallback - bez stereo
+                    try {
+                        var audio = new Audio();
+                        audio.volume = 0.2;
+                        audio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
+                        audio.play().catch(function(e) {
+                            console.log('Błąd odtwarzania dźwięku:', e);
+                        });
+                    } catch(e) {
+                        console.log('Wszystkie metody audio zawiodły:', e);
+                    }
+                }
+            }
+            
+            // Funkcja animująca kulkę
+            function startAnimation() {
+                var container = document.querySelector('.indicator-container');
+                var containerWidth = container.offsetWidth;
+                var indicatorWidth = app.elements.indicator.offsetWidth;
+                var position = 0;
+                var direction = 1; // 1 = prawo, -1 = lewo
+                var speed = 12; // pikseli na klatkę
+                var wasAtEdge = false;
+                
+                function animate() {
+                    if (!app.state.isPaused) {
+                        position += speed * direction;
+                        
+                        // Zmiana kierunku na krawędziach
+                        if (position >= containerWidth - indicatorWidth) {
+                            position = containerWidth - indicatorWidth;
+                            direction = -1;
+                            
+                            // Dźwięk przy prawej krawędzi
+                            if (!wasAtEdge) {
+                                playSound(false);
+                                wasAtEdge = true;
+                            }
+                        } else if (position <= 0) {
+                            position = 0;
+                            direction = 1;
+                            
+                            // Dźwięk przy lewej krawędzi
+                            if (!wasAtEdge) {
+                                playSound(true);
+                                wasAtEdge = true;
+                            }
+                        } else {
+                            wasAtEdge = false;
+                        }
+                        
+                        app.elements.indicator.style.left = position + 'px';
+                    }
+                    
+                    app.state.animationId = requestAnimationFrame(animate);
+                }
+                
+                app.state.animationId = requestAnimationFrame(animate);
+            }
+            
+            // Zakończenie sesji
+            function endSession() {
+                // Czyszczenie timerów
+                clearInterval(app.state.timerId);
+                if (app.state.animationId) {
+                    cancelAnimationFrame(app.state.animationId);
+                }
+                
+                showScreen('end');
+            }
+            
+            // Aktualizacja wyników
+            function updateResults() {
+                if (app.state.preRating !== null && app.state.postRating !== null) {
+                    var diff = app.state.preRating - app.state.postRating;
+                    var diffText, emoji, color;
+                    
+                    if (diff > 3) {
+                        diffText = "Znaczne zmniejszenie o " + diff + " punktów";
+                        emoji = "🌟";
+                        color = "#4caf50";
+                    } else if (diff > 0) {
+                        diffText = "Zmniejszenie o " + diff + " punktów";
+                        emoji = "👍";
+                        color = "#8bc34a";
+                    } else if (diff === 0) {
+                        diffText = "Brak zmiany";
+                        emoji = "🔄";
+                        color = "#ffc107";
+                    } else {
+                        diffText = "Zwiększenie o " + Math.abs(diff) + " punktów";
+                        emoji = "📝";
+                        color = "#f44336";
+                    }
+                    
+                    app.elements.results.innerHTML = '<div style="background-color: #222; padding: 15px; border-radius: 10px;">' +
+                        '<p>' + emoji + ' <strong>Wyniki sesji:</strong></p>' +
+                        '<p>Napięcie przed: <strong>' + app.state.preRating + '/10</strong></p>' +
+                        '<p>Napięcie po: <strong>' + app.state.postRating + '/10</strong></p>' +
+                        '<p style="margin-top: 10px; color: ' + color + '"><strong>' + diffText + '</strong></p>' +
+                        '</div>';
+                }
+            }
+            
+            // ---- INICJALIZACJA EVENTÓW ----
+            
+            // Przycisk Start
+            app.buttons.start.addEventListener('click', function() {
+                showScreen('rating');
+            });
+            
+            // Przycisk Rozpocznij ruch wskaźnika
+            app.buttons.begin.addEventListener('click', function() {
+                if (app.state.preRating === null) {
+                    alert('Proszę wybrać poziom napięcia');
+                    return;
+                }
+                
+                showScreen('session');
+                setupAudio();
+                startTimer();
+                startAnimation();
+            });
+            
+            // Przycisk Zakończ sesję
+            app.buttons.stop.addEventListener('click', function() {
+                endSession();
+            });
+            
+            // Przycisk Nowa sesja
+            app.buttons.newSession.addEventListener('click', function() {
+                // Reset stanu
+                app.state.preRating = null;
+                app.state.postRating = null;
+                
+                // Reset UI
+                app.ratings.preButtons.forEach(function(btn) {
+                    btn.classList.remove('selected');
+                });
+                app.ratings.postButtons.forEach(function(btn) {
+                    btn.classList.remove('selected');
+                });
+                app.elements.results.innerHTML = '';
+                
+                showScreen('start');
+            });
+            
+            // Przyciski oceny początkowej
+            app.ratings.preButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    app.ratings.preButtons.forEach(function(btn) {
+                        btn.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    app.state.preRating = parseInt(this.getAttribute('data-value'));
+                });
+            });
+            
+            // Przyciski oceny końcowej
+            app.ratings.postButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    app.ratings.postButtons.forEach(function(btn) {
+                        btn.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    app.state.postRating = parseInt(this.getAttribute('data-value'));
+                    updateResults();
+                });
+            });
+            
+            // Przełącznik dźwięku
+            app.elements.soundToggle.addEventListener('change', function() {
+                app.state.soundEnabled = this.checked;
+            });
+            
+            // Pauza/wznowienie na kliknięcie ekranu sesji
+            app.screens.session.addEventListener('click', function(e) {
+                // Ignoruj kliknięcie na przycisk stop
+                if (e.target === app.buttons.stop) return;
+                
+                app.state.isPaused = !app.state.isPaused;
+                app.screens.session.style.backgroundColor = 
+                    app.state.isPaused ? '#2d1d30' : '#121212';
+            });
+        };
+    </script>
+</body>
+</html>

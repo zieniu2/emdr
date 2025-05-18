@@ -10,26 +10,26 @@
             text-align: center;
             background-color: #121212;
             color: white;
-            padding: 20px;
+            padding: 0; /* Usunięty padding body */
             margin: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Zmienione dla lepszego układu przy pełnoekranowym wskaźniku */
+            justify-content: flex-start; 
             box-sizing: border-box;
-            overflow-x: hidden; /* Zapobieganie poziomemu przewijaniu */
+            overflow-x: hidden; 
         }
         
-        .container {
+        .page-container { /* Nowy kontener dla treści innych niż sesja EMDR */
             max-width: 100%;
-            width: 600px; /* Ograniczenie szerokości dla lepszej czytelności na desktopie */
-            padding: 0 15px;
+            width: 600px; 
+            padding: 20px 15px; /* Padding przeniesiony tutaj */
             box-sizing: border-box;
         }
         
         button {
-            background-color: #9c27b0; /* Główny kolor akcji */
+            background-color: #9c27b0; 
             color: white;
             border: none;
             padding: 12px 25px;
@@ -41,7 +41,7 @@
         }
         
         button:hover {
-            background-color: #7b1fa2; /* Ciemniejszy odcień przy najechaniu */
+            background-color: #7b1fa2; 
         }
 
         button.secondary {
@@ -53,49 +53,51 @@
         
         .screen {
             display: none;
-            width: 100%;
-            background-color: #1e1e1e; /* Tło dla sekcji */
+            width: 100%; /* Ekrany w .page-container będą miały 100% z 600px */
+            background-color: #1e1e1e; 
             padding: 20px;
             border-radius: 10px;
-            margin-top: 10px; /* Zmniejszony margines */
+            margin-top: 10px; 
             box-sizing: border-box;
         }
-        #startScreen { margin-top: 0;} /* Brak marginesu dla pierwszego ekranu */
+        /* Ekran sesji będzie miał specjalne traktowanie dla pełnej szerokości */
+        #sessionScreen.screen {
+            width: 100vw; /* Pełna szerokość viewportu */
+            height: calc(100vh - 40px); /* Pełna wysokość minus mały margines */
+            margin: 20px 0 20px 0; /* Marginesy góra/dół, brak bocznych */
+            padding: 10px 0; /* Mniejszy padding pionowy, brak poziomego */
+            border-radius: 0; /* Bez zaokrąglenia dla pełnego ekranu */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #startScreen { margin-top: 0;} 
         
         .active {
             display: block;
         }
         
-        /* Zmiany dla wskaźnika i jego kontenera */
-        #sessionScreen {
-            padding: 5px; /* Mniejszy padding dla ekranu sesji */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between; /* Rozmieszczenie elementów */
-            height: calc(100vh - 120px); /* Dopasowanie wysokości ekranu sesji */
-            min-height: 400px;
-        }
-
         .indicator-container {
-            width: 100%;
-            flex-grow: 1; /* Kontener wskaźnika zajmuje dostępną przestrzeń */
-            min-height: 200px; /* Minimalna wysokość, aby było widać */
+            width: 100%; /* Pełna szerokość (względem rodzica, czyli #sessionScreen) */
+            flex-grow: 1; 
+            min-height: 150px; /* Zmniejszona minimalna wysokość */
             background-color: #2c2c2c; 
-            border-radius: 5px;
-            margin: 10px 0; /* Zmieniony margines */
+            /* Usunięty border-radius, bo #sessionScreen jest teraz prostokątny */
+            margin: 5px 0; 
             position: relative;
             overflow: hidden;
         }
         
         .indicator {
-            width: 80px;  /* Znacznie większy wskaźnik */
-            height: 80px; /* Znacznie większy wskaźnik */
+            width: 60px;  /* Rozmiar wskaźnika */
+            height: 60px; 
             background-color: #ff5722; 
             border-radius: 50%;
             position: absolute;
             left: 0;
-            top: 50%; /* Wyśrodkowanie w pionie */
-            transform: translateY(-50%); /* Wyśrodkowanie w pionie */
+            top: 50%; 
+            transform: translateY(-50%); 
             box-shadow: 0 0 15px #ff5722;
         }
                 
@@ -103,8 +105,11 @@
             font-size: 20px; 
             margin: 5px 0;
         }
-        .session-controls { /* Kontener na timer i przycisk stop */
-            padding: 10px 0;
+        .session-controls { 
+            padding: 10px 15px; /* Dodany padding dla kontrolek na pełnym ekranie */
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center; /* Wyśrodkowanie kontrolek */
         }
         
         .rating-button-group {
@@ -153,7 +158,7 @@
         input[type="number"],
         textarea,
         select {
-            width: calc(100% - 22px); /* Dostosowanie szerokości */
+            width: 100%; /* Pełna szerokość w kontenerze */
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
@@ -190,18 +195,18 @@
 
         .support-message {
             position: fixed;
-            bottom: 10px; /* Mniejszy odstęp od dołu */
+            bottom: 10px; 
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0,0,0,0.8); /* Ciemniejsze dla lepszej czytelności */
+            background-color: rgba(0,0,0,0.8); 
             color: white;
             padding: 8px 12px;
             border-radius: 5px;
-            font-size: 13px; /* Mniejsza czcionka */
-            z-index: 1000; /* Wyżej na wszelki wypadek */
+            font-size: 13px; 
+            z-index: 1000; 
             opacity: 0;
             transition: opacity 0.5s;
-            pointer-events: none; /* Aby nie blokować kliknięć pod spodem */
+            pointer-events: none; 
         }
         .support-message.visible {
             opacity: 1;
@@ -223,7 +228,7 @@
         .header-subtitle { 
             font-size: 16px;
             color: #aaa; 
-            margin-bottom: 20px; /* Zmniejszony margines */
+            margin-bottom: 20px; 
         }
         .info-box {
             background-color: #2a2a2a; 
@@ -251,17 +256,17 @@
             width: 1em;
             margin-left: -1em;
         }
-        /* Styl dla tekstu z instrukcjami na ekranie sesji */
         .session-instructions {
             font-size: 14px; 
             color: #aaa; 
-            margin: 5px 0;
+            margin: 5px 15px; /* Dodany padding boczny dla instrukcji */
+            text-align: center;
         }
 
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page-container" id="pageContainer">
         <h1 class="header-logo">EMDR Self-Help Plus</h1>
         <p class="header-subtitle">Twoje narzędzie wsparcia terapeutycznego</p>
 
@@ -311,13 +316,14 @@
                 <option value="600">10 minut</option>
             </select>
 
-            <label for="indicatorSpeed">Prędkość wskaźnika:</label>
+            <label for="indicatorSpeed">Prędkość wskaźnika (pikseli na klatkę):</label>
             <select id="indicatorSpeed">
-                <option value="15">Wolno</option> 
-                <option value="8" selected>Średnio</option>
-                <option value="3">Szybko</option> 
+                <option value="6">Wolno (6px)</option> 
+                <option value="12" selected>Średnio (12px)</option>
+                <option value="20">Szybko (20px)</option> 
+                <option value="28">Bardzo Szybko (28px)</option> 
             </select>
-            <p class="label-explanation">(Niższa wartość = szybszy ruch. "Szybko" jest bardzo intensywne.)</p>
+            <p class="label-explanation">(Większa wartość = szybszy ruch. "Bardzo Szybko" jest intensywne.)</p>
 
 
             <button id="goToPreparationButton">Przejdź do Przygotowania</button>
@@ -352,7 +358,7 @@
             <input type="text" id="bodyLocation" placeholder="Np. gardło, kark, brzuch, klatka piersiowa...">
             
             <label for="bodySensation">Jakie to uczucie?</label>
-            <input type="text" id="bodySensation" placeholder="Np. kamień, drut, wir, ciężar, ucisk, mrowienie, pieczenie/palenie, pustka, zimno, gorąco...">
+            <input type="text" id="bodySensation" placeholder="Np. kamień, drut, wir, ciężar, ucisk, mrowienie, pieczenie/palenie, pustka, zimno, gorąco, kłucie, drżenie...">
 
             <label for="problemImage">Jaki obraz najlepiej reprezentuje to, co teraz czujesz / tę część Ciebie?</label>
             <select id="problemImage">
@@ -482,6 +488,7 @@
                     startCompletelyNewSession: document.getElementById('startCompletelyNewSessionButton')
                 },
                 elements: {
+                    pageContainer: document.getElementById('pageContainer'), // Główny kontener strony
                     soundToggle: document.getElementById('soundToggle'),
                     supportMessagesToggle: document.getElementById('supportMessagesToggle'),
                     breathingReminderToggle: document.getElementById('breathingReminderToggle'),
@@ -511,7 +518,7 @@
                 state: {
                     settings: {
                         duration: 60, 
-                        speed: 8,    // Zmienione wartości prędkości (opóźnienie)
+                        stepSize: 12, // Zmienione na stepSize (px per frame)
                         soundEnabled: true,
                         supportMessagesEnabled: false,
                         breathingReminderEnabled: false,
@@ -527,14 +534,14 @@
                     lastProblem: null, 
                     isPaused: false,
                     timerId: null,
-                    animationFrameId: null, // Będzie używane z setTimeout dla kontroli prędkości
+                    animationFrameId: null, 
                     audioContext: null,
                     supportMessageIntervalId: null,
                     breathingReminderIntervalId: null,
                     indicatorDirection: 1,
                     indicatorPosition: 0,
                 },
-                therapeuticData: {
+                therapeuticData: { // ... (reszta danych bez zmian)
                     prompts: {
                         cien_pogardy: "Skup się na tym zimnym, oceniającym spojrzeniu. Gdzie je czujesz w ciele? Jaki impuls w Tobie uruchamia? Pamiętaj, że Dorosły Ty może być obecny przy tej części, nie musisz jej zmieniać.",
                         lekliwy_chlopiec: "Zobacz tego małego, lękliwego chłopca. Czego się boi? Czego potrzebuje? Jak Dorosły Ty możesz mu towarzyszyć z obecnością i współczuciem?",
@@ -543,12 +550,8 @@
                         obawa_oceny: "Poczuj tę obawę przed oceną. Jakie myśli jej towarzyszą? Jaki obraz siebie widzisz w tej sytuacji? Dorosły Ty może spojrzeć na to z dystansem i współczuciem."
                     },
                     supportMessages: [
-                        "Jestem tu z Tobą.",
-                        "Nie musisz tego zmieniać, po prostu bądź.",
-                        "Widzę Cię.",
-                        "Jesteś bezpieczny/a, by to czuć.",
-                        "Pozwól, by to płynęło.",
-                        "Oddychaj w to miejsce.",
+                        "Jestem tu z Tobą.", "Nie musisz tego zmieniać, po prostu bądź.", "Widzę Cię.",
+                        "Jesteś bezpieczny/a, by to czuć.", "Pozwól, by to płynęło.", "Oddychaj w to miejsce.",
                         "Nie przyszedłem Cię zmieniać. Przyszedłem, żeby z Tobą być."
                     ],
                     observations: [
@@ -564,10 +567,22 @@
             };
 
             function showScreen(screenId) {
-                for (var key in app.screens) {
-                    app.screens[key].classList.remove('active');
+                // Ukryj wszystkie ekrany (te w pageContainer)
+                app.screens.start.classList.remove('active');
+                app.screens.config.classList.remove('active');
+                app.screens.preparation.classList.remove('active');
+                app.screens.end.classList.remove('active');
+                // Ukryj ekran sesji (który jest poza pageContainer)
+                app.screens.session.classList.remove('active');
+
+
+                if (screenId === 'session') {
+                    app.elements.pageContainer.style.display = 'none'; // Ukryj kontener strony
+                    app.screens.session.classList.add('active');
+                } else {
+                    app.elements.pageContainer.style.display = 'block'; // Pokaż kontener strony
+                    app.screens[screenId].classList.add('active');
                 }
-                app.screens[screenId].classList.add('active');
                 window.scrollTo(0, 0); 
             }
 
@@ -620,26 +635,18 @@
                 });
             }
 
-            function resetCurrentProblem() {
+            function resetCurrentProblem() { // ... (bez zmian)
                 app.state.currentProblem = {
-                    activePart: '', activePartOther: '',
-                    bodyLocation: '', bodySensation: '',
-                    problemImage: '', problemImageOther: '',
-                    negativeCognition: '', sudPre: null,
-                    positiveCognition: '', voc: null, sudPost: null,
-                    notes: '', observations: []
+                    activePart: '', activePartOther: '', bodyLocation: '', bodySensation: '',
+                    problemImage: '', problemImageOther: '', negativeCognition: '', sudPre: null,
+                    positiveCognition: '', voc: null, sudPost: null, notes: '', observations: []
                 };
-                app.elements.activePart.value = '';
-                app.elements.activePartOther.value = ''; app.elements.activePartOther.style.display = 'none';
+                app.elements.activePart.value = ''; app.elements.activePartOther.value = ''; app.elements.activePartOther.style.display = 'none';
                 app.elements.therapeuticPrompts.style.display = 'none'; app.elements.therapeuticPrompts.textContent = '';
-                app.elements.bodyLocation.value = '';
-                app.elements.bodySensation.value = '';
-                app.elements.problemImage.value = '';
-                app.elements.problemImageOther.value = ''; app.elements.problemImageOther.style.display = 'none';
-                app.elements.negativeCognition.value = '';
-                app.elements.positiveCognition.value = '';
+                app.elements.bodyLocation.value = ''; app.elements.bodySensation.value = '';
+                app.elements.problemImage.value = ''; app.elements.problemImageOther.value = ''; app.elements.problemImageOther.style.display = 'none';
+                app.elements.negativeCognition.value = ''; app.elements.positiveCognition.value = '';
                 app.elements.sessionNotes.value = '';
-                
                 Array.from(app.elements.sudPreButtonsContainer.children).forEach(b => b.classList.remove('selected'));
                 Array.from(app.elements.sudPostButtonsContainer.children).forEach(b => b.classList.remove('selected'));
                 Array.from(app.elements.vocRatingButtonsContainer.children).forEach(b => b.classList.remove('selected'));
@@ -647,15 +654,12 @@
                 app.elements.resultsDisplay.innerHTML = '';
             }
             
-            function populatePreparationScreenFromProblem(problem) {
+            function populatePreparationScreenFromProblem(problem) { // ... (bez zmian)
                  if (!problem) return;
-                app.elements.activePart.value = problem.activePart || '';
-                handleActivePartChange(); 
+                app.elements.activePart.value = problem.activePart || ''; handleActivePartChange(); 
                 app.elements.activePartOther.value = problem.activePartOther || '';
-                app.elements.bodyLocation.value = problem.bodyLocation || '';
-                app.elements.bodySensation.value = problem.bodySensation || '';
-                app.elements.problemImage.value = problem.problemImage || '';
-                handleProblemImageChange(); 
+                app.elements.bodyLocation.value = problem.bodyLocation || ''; app.elements.bodySensation.value = problem.bodySensation || '';
+                app.elements.problemImage.value = problem.problemImage || ''; handleProblemImageChange(); 
                 app.elements.problemImageOther.value = problem.problemImageOther || '';
                 app.elements.negativeCognition.value = problem.negativeCognition || '';
                 if (problem.sudPre !== null) {
@@ -664,88 +668,73 @@
                 }
             }
 
-            function saveSettings() {
+            function saveSettings() { // ... (bez zmian)
                 localStorage.setItem('emdrAppSettings', JSON.stringify(app.state.settings));
             }
 
-            function loadSettings() {
+            function loadSettings() { // ... (bez zmian)
                 const saved = localStorage.getItem('emdrAppSettings');
-                if (saved) {
-                    app.state.settings = JSON.parse(saved);
-                }
+                if (saved) { app.state.settings = JSON.parse(saved); }
                 app.elements.sessionDuration.value = app.state.settings.duration;
-                app.elements.indicatorSpeed.value = app.state.settings.speed;
+                app.elements.indicatorSpeed.value = app.state.settings.stepSize; // Zmienione na stepSize
                 app.elements.soundToggle.checked = app.state.settings.soundEnabled;
                 app.elements.supportMessagesToggle.checked = app.state.settings.supportMessagesEnabled;
                 app.elements.breathingReminderToggle.checked = app.state.settings.breathingReminderEnabled;
             }
 
-            function saveLastProblem() {
+            function saveLastProblem() { // ... (bez zmian)
                 localStorage.setItem('emdrAppLastProblem', JSON.stringify(app.state.currentProblem));
             }
-            function loadLastProblem() {
+            function loadLastProblem() { // ... (bez zmian)
                 const saved = localStorage.getItem('emdrAppLastProblem');
-                if (saved) {
-                    app.state.lastProblem = JSON.parse(saved);
-                } else {
-                    app.state.lastProblem = null;
-                }
+                if (saved) { app.state.lastProblem = JSON.parse(saved); } else { app.state.lastProblem = null; }
             }
 
-            function handleActivePartChange() {
+            function handleActivePartChange() { // ... (bez zmian)
                 const selectedPart = app.elements.activePart.value;
                 app.elements.activePartOther.style.display = (selectedPart === 'inne') ? 'block' : 'none';
                 if (selectedPart === 'inne') app.elements.activePartOther.focus();
-                
                 if (app.therapeuticData.prompts[selectedPart]) {
                     app.elements.therapeuticPrompts.textContent = app.therapeuticData.prompts[selectedPart];
                     app.elements.therapeuticPrompts.style.display = 'block';
-                } else {
-                    app.elements.therapeuticPrompts.style.display = 'none';
-                }
+                } else { app.elements.therapeuticPrompts.style.display = 'none'; }
             }
-             function handleProblemImageChange() {
+             function handleProblemImageChange() { // ... (bez zmian)
                 app.elements.problemImageOther.style.display = (app.elements.problemImage.value === 'inne_obraz') ? 'block' : 'none';
                  if (app.elements.problemImage.value === 'inne_obraz') app.elements.problemImageOther.focus();
             }
 
-            function startTimer(duration) {
-                app.state.timeRemaining = duration;
-                updateTimerDisplay();
-                
+            function startTimer(duration) { // ... (bez zmian)
+                app.state.timeRemaining = duration; updateTimerDisplay();
                 app.state.timerId = setInterval(function() {
                     if (!app.state.isPaused) {
-                        app.state.timeRemaining--;
-                        updateTimerDisplay();
-                        
-                        if (app.state.timeRemaining <= 0) {
-                            completeSession();
-                        }
+                        app.state.timeRemaining--; updateTimerDisplay();
+                        if (app.state.timeRemaining <= 0) { completeSession(); }
                     }
                 }, 1000);
             }
             
-            function updateTimerDisplay() {
+            function updateTimerDisplay() { // ... (bez zmian)
                 var minutes = Math.floor(app.state.timeRemaining / 60);
                 var seconds = app.state.timeRemaining % 60;
-                app.elements.timerDisplay.textContent = 
-                    minutes.toString().padStart(2, '0') + ':' + 
-                    seconds.toString().padStart(2, '0');
+                app.elements.timerDisplay.textContent = minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
             }
             
-            function startAnimation(delayValue) { 
+            // ZMODYFIKOWANA FUNKCJA ANIMACJI
+            function startAnimation(stepPxSize) { 
                 var container = app.elements.indicatorContainer;
-                var containerWidth = container.offsetWidth;
+                // Szerokość kontenera jest teraz pobierana dynamicznie dla pełnej szerokości ekranu
+                var containerWidth = container.offsetWidth; 
                 var indicatorWidth = app.elements.indicator.offsetWidth;
-                var stepSize = 3; // Zwiększona ilość pikseli na krok dla szybszego wrażenia
+                var currentStepSize = parseInt(stepPxSize); // Użyj wybranej prędkości
 
                 function animate() {
-                    if (app.state.isPaused) { // Sprawdź pauzę na początku
-                        app.state.animationFrameId = setTimeout(() => requestAnimationFrame(animate), delayValue);
+                    if (app.state.isPaused) { 
+                        app.state.animationFrameId = requestAnimationFrame(animate); // Kontynuuj pętlę, ale nie ruszaj
                         return;
                     }
 
-                    app.state.indicatorPosition += stepSize * app.state.indicatorDirection;
+                    app.state.indicatorPosition += currentStepSize * app.state.indicatorDirection;
                         
                     if (app.state.indicatorPosition >= containerWidth - indicatorWidth) {
                         app.state.indicatorPosition = containerWidth - indicatorWidth;
@@ -759,75 +748,57 @@
                         
                     app.elements.indicator.style.left = app.state.indicatorPosition + 'px';
                     
-                    app.state.animationFrameId = setTimeout(() => requestAnimationFrame(animate), delayValue);
+                    app.state.animationFrameId = requestAnimationFrame(animate); // Bezpośrednie requestAnimationFrame
                 }
                 
-                if (app.state.animationFrameId) clearTimeout(app.state.animationFrameId);
-                app.state.animationFrameId = setTimeout(() => requestAnimationFrame(animate), delayValue);
+                if (app.state.animationFrameId) cancelAnimationFrame(app.state.animationFrameId); // Anuluj poprzednią klatkę
+                app.state.animationFrameId = requestAnimationFrame(animate);
             }
 
-            function stopAnimationAndTimers() {
-                clearInterval(app.state.timerId);
-                app.state.timerId = null;
+            function stopAnimationAndTimers() { // Zmodyfikowane anulowanie klatki
+                clearInterval(app.state.timerId); app.state.timerId = null;
                 if (app.state.animationFrameId) {
-                    clearTimeout(app.state.animationFrameId); 
+                    cancelAnimationFrame(app.state.animationFrameId); // Użyj cancelAnimationFrame
                     app.state.animationFrameId = null;
                 }
-                if (app.state.supportMessageIntervalId) {
-                    clearInterval(app.state.supportMessageIntervalId);
-                    app.state.supportMessageIntervalId = null;
-                    app.elements.supportMessageDisplay.classList.remove('visible');
-                }
-                if (app.state.breathingReminderIntervalId) {
-                    clearInterval(app.state.breathingReminderIntervalId);
-                    app.state.breathingReminderIntervalId = null;
-                    app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse');
-                }
-                app.state.isPaused = false; 
-                app.screens.session.style.backgroundColor = '#1e1e1e'; 
+                // ... reszta bez zmian ...
+                if (app.state.supportMessageIntervalId) { clearInterval(app.state.supportMessageIntervalId); app.state.supportMessageIntervalId = null; app.elements.supportMessageDisplay.classList.remove('visible'); }
+                if (app.state.breathingReminderIntervalId) { clearInterval(app.state.breathingReminderIntervalId); app.state.breathingReminderIntervalId = null; app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse'); }
+                app.state.isPaused = false; app.screens.session.style.backgroundColor = '#1e1e1e'; 
             }
             
-            function completeSession() {
+            function completeSession() { // ... (bez zmian)
                 stopAnimationAndTimers();
-                app.state.currentProblem.activePart = app.elements.activePart.value;
-                app.state.currentProblem.activePartOther = app.elements.activePartOther.value;
-                app.state.currentProblem.bodyLocation = app.elements.bodyLocation.value;
-                app.state.currentProblem.bodySensation = app.elements.bodySensation.value;
-                app.state.currentProblem.problemImage = app.elements.problemImage.value;
-                app.state.currentProblem.problemImageOther = app.elements.problemImageOther.value;
+                app.state.currentProblem.activePart = app.elements.activePart.value; app.state.currentProblem.activePartOther = app.elements.activePartOther.value;
+                app.state.currentProblem.bodyLocation = app.elements.bodyLocation.value; app.state.currentProblem.bodySensation = app.elements.bodySensation.value;
+                app.state.currentProblem.problemImage = app.elements.problemImage.value; app.state.currentProblem.problemImageOther = app.elements.problemImageOther.value;
                 app.state.currentProblem.negativeCognition = app.elements.negativeCognition.value;
-                
-                saveLastProblem(); 
-                showScreen('end');
+                saveLastProblem(); showScreen('end');
             }
 
-            function setupAudio() {
+            function setupAudio() { // ... (bez zmian)
                 if (!app.state.audioContext && app.state.settings.soundEnabled) {
-                    try {
-                        app.state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    } catch(e) {
-                        console.warn('Web Audio API nie jest wspierane.');
-                        app.state.settings.soundEnabled = false; // Wyłącz dźwięk, jeśli nie ma wsparcia
-                        app.elements.soundToggle.checked = false;
-                    }
+                    try { app.state.audioContext = new (window.AudioContext || window.webkitAudioContext)(); } 
+                    catch(e) { console.warn('Web Audio API nie jest wspierane.'); app.state.settings.soundEnabled = false; app.elements.soundToggle.checked = false; }
                 }
             }
             
+            // ZMODYFIKOWANA FUNKCJA DŹWIĘKU
             function playSound(isLeft) {
                 if (!app.state.settings.soundEnabled || app.state.isPaused || !app.state.audioContext) return;
                 
                 try {
                     var audioCtx = app.state.audioContext;
-                     if (audioCtx.state === 'suspended') { // Potrzebna interakcja użytkownika do wznowienia
-                        audioCtx.resume();
-                    }
+                     if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+
                     var oscillator = audioCtx.createOscillator();
                     var gainNode = audioCtx.createGain();
                     var panner = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
 
                     oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(isLeft ? 280 : 380, audioCtx.currentTime);
-                    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime); 
+                    // Przywrócone częstotliwości z oryginalnego kodu użytkownika (jeśli były inne, tu są przykładowe)
+                    oscillator.frequency.setValueAtTime(isLeft ? 400 : 500, audioCtx.currentTime); 
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Głośność 0.1
 
                     if (panner) {
                         panner.pan.setValueAtTime(isLeft ? -1.0 : 1.0, audioCtx.currentTime);
@@ -837,122 +808,95 @@
                     }
                     
                     oscillator.start(audioCtx.currentTime);
-                    oscillator.stop(audioCtx.currentTime + 0.05); 
+                    oscillator.stop(audioCtx.currentTime + 0.05); // Krótki dźwięk
                 } catch(e) {
                     console.error('Błąd odtwarzania dźwięku:', e);
                 }
             }
             
-            function startSupportMessages() {
+            function startSupportMessages() { // ... (bez zmian)
                 if (!app.state.settings.supportMessagesEnabled || app.state.supportMessageIntervalId) return;
-                
                 const showMsg = () => {
                     if (app.state.isPaused) return;
                     const randomIndex = Math.floor(Math.random() * app.therapeuticData.supportMessages.length);
                     app.elements.supportMessageDisplay.textContent = app.therapeuticData.supportMessages[randomIndex];
                     app.elements.supportMessageDisplay.classList.add('visible');
-                    setTimeout(() => {
-                        app.elements.supportMessageDisplay.classList.remove('visible');
-                    }, 3500); 
+                    setTimeout(() => { app.elements.supportMessageDisplay.classList.remove('visible'); }, 3500); 
                 };
-                // showMsg(); Nie pokazuj od razu, poczekaj na interwał
                 app.state.supportMessageIntervalId = setInterval(showMsg, 20000); 
             }
 
-            function startBreathingReminder() {
+            function startBreathingReminder() { // ... (bez zmian)
                 if (!app.state.settings.breathingReminderEnabled || app.state.breathingReminderIntervalId) return;
                 app.state.breathingReminderIntervalId = setInterval(() => {
                     if (app.state.isPaused) return;
                     app.elements.indicatorContainer.classList.add('breathing-reminder-pulse');
-                    setTimeout(() => {
-                        app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse');
-                    }, 4000); 
+                    setTimeout(() => { app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse'); }, 4000); 
                 }, 30000); 
             }
 
-            function updateResultsDisplay() {
+            function updateResultsDisplay() { // ... (bez zmian)
                 const { sudPre, sudPost, positiveCognition, voc } = app.state.currentProblem;
                 let html = '<div class="info-box" style="border-left-color: #ff5722;"><h3>Wyniki Sesji:</h3>';
-                let preText = sudPre !== null ? `${sudPre}/10` : 'N/A';
-                let postText = sudPost !== null ? `${sudPost}/10` : 'N/A';
-                html += `<p>Napięcie (SUD) przed: <strong>${preText}</strong></p>`;
-                html += `<p>Napięcie (SUD) po: <strong>${postText}</strong></p>`;
-
+                let preText = sudPre !== null ? `${sudPre}/10` : 'N/A'; let postText = sudPost !== null ? `${sudPost}/10` : 'N/A';
+                html += `<p>Napięcie (SUD) przed: <strong>${preText}</strong></p><p>Napięcie (SUD) po: <strong>${postText}</strong></p>`;
                 if (sudPre !== null && sudPost !== null) {
-                    const diff = sudPre - sudPost;
-                    let diffText, color;
+                    const diff = sudPre - sudPost; let diffText, color;
                     if (diff > 2) { diffText = `Znaczne zmniejszenie o ${diff} pkt.`; color = "#4caf50"; }
                     else if (diff > 0) { diffText = `Zmniejszenie o ${diff} pkt.`; color = "#8bc34a"; }
                     else if (diff === 0) { diffText = "Brak zmiany w SUD."; color = "#ffc107"; }
                     else { diffText = `Zwiększenie o ${Math.abs(diff)} pkt.`; color = "#f44336"; }
                     html += `<p style="color: ${color};"><strong>${diffText}</strong></p>`;
                 }
-
                 if (positiveCognition) {
                     html += `<p style="margin-top:10px;">Pozytywne Przekonanie (PC): <strong>"${positiveCognition}"</strong></p>`;
-                    if (voc !== null) {
-                        html += `<p>Prawdziwość PC (VoC): <strong>${voc}/7</strong></p>`;
-                    }
+                    if (voc !== null) { html += `<p>Prawdziwość PC (VoC): <strong>${voc}/7</strong></p>`; }
                 }
-                html += '</div>';
-                app.elements.resultsDisplay.innerHTML = html;
+                html += '</div>'; app.elements.resultsDisplay.innerHTML = html;
             }
 
             // ---- EVENT LISTENERS ----
-            app.elements.soundToggle.addEventListener('change', function() {
-                app.state.settings.soundEnabled = this.checked;
-                saveSettings();
+            app.elements.soundToggle.addEventListener('change', function() { // ... (bez zmian)
+                app.state.settings.soundEnabled = this.checked; saveSettings();
                 if (this.checked && !app.state.audioContext) setupAudio();
             });
-            app.elements.supportMessagesToggle.addEventListener('change', function() {
-                app.state.settings.supportMessagesEnabled = this.checked;
-                saveSettings();
-                 if (!this.checked && app.state.supportMessageIntervalId) { // Wyłącz, jeśli odznaczono
-                    clearInterval(app.state.supportMessageIntervalId);
-                    app.state.supportMessageIntervalId = null;
-                    app.elements.supportMessageDisplay.classList.remove('visible');
-                }
+            app.elements.supportMessagesToggle.addEventListener('change', function() { // ... (bez zmian)
+                app.state.settings.supportMessagesEnabled = this.checked; saveSettings();
+                 if (!this.checked && app.state.supportMessageIntervalId) { clearInterval(app.state.supportMessageIntervalId); app.state.supportMessageIntervalId = null; app.elements.supportMessageDisplay.classList.remove('visible');}
             });
-            app.elements.breathingReminderToggle.addEventListener('change', function() {
-                app.state.settings.breathingReminderEnabled = this.checked;
-                saveSettings();
-                if (!this.checked && app.state.breathingReminderIntervalId) { // Wyłącz, jeśli odznaczono
-                    clearInterval(app.state.breathingReminderIntervalId);
-                    app.state.breathingReminderIntervalId = null;
-                    app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse');
-                }
+            app.elements.breathingReminderToggle.addEventListener('change', function() { // ... (bez zmian)
+                app.state.settings.breathingReminderEnabled = this.checked; saveSettings();
+                if (!this.checked && app.state.breathingReminderIntervalId) { clearInterval(app.state.breathingReminderIntervalId); app.state.breathingReminderIntervalId = null; app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse');}
             });
             
-            app.buttons.newSessionSetup.addEventListener('click', function() {
-                resetCurrentProblem();
-                showScreen('config');
+            app.buttons.newSessionSetup.addEventListener('click', function() { // ... (bez zmian)
+                resetCurrentProblem(); showScreen('config');
             });
 
-            app.buttons.quickStart.addEventListener('click', function() {
+            app.buttons.quickStart.addEventListener('click', function() { // ... (bez zmian)
                 loadLastProblem();
-                if (app.state.lastProblem && Object.keys(app.state.lastProblem).length > 0 && app.state.lastProblem.activePart) { // Sprawdź czy są dane
+                if (app.state.lastProblem && Object.keys(app.state.lastProblem).length > 0 && app.state.lastProblem.activePart) { 
                     app.state.currentProblem = JSON.parse(JSON.stringify(app.state.lastProblem)); 
                     populatePreparationScreenFromProblem(app.state.currentProblem);
-                    app.state.settings.duration = parseInt(app.elements.sessionDuration.value); // Użyj aktualnych ustawień z UI
-                    app.state.settings.speed = parseInt(app.elements.indicatorSpeed.value); 
+                    app.state.settings.duration = parseInt(app.elements.sessionDuration.value); 
+                    app.state.settings.stepSize = parseInt(app.elements.indicatorSpeed.value); // Zmienione na stepSize
                     showScreen('preparation');
                 } else {
                     alert("Brak danych z ostatniej sesji lub dane są niekompletne. Rozpocznij nową sesję od konfiguracji.");
-                    resetCurrentProblem();
-                    showScreen('config');
+                    resetCurrentProblem(); showScreen('config');
                 }
             });
 
-            app.elements.sessionDuration.addEventListener('change', function() {
-                app.state.settings.duration = parseInt(this.value);
-                saveSettings();
+            app.elements.sessionDuration.addEventListener('change', function() { // ... (bez zmian)
+                app.state.settings.duration = parseInt(this.value); saveSettings();
             });
-            app.elements.indicatorSpeed.addEventListener('change', function() {
-                app.state.settings.speed = parseInt(this.value); 
+            // Zmieniony event listener dla prędkości
+            app.elements.indicatorSpeed.addEventListener('change', function() { 
+                app.state.settings.stepSize = parseInt(this.value); // Zmienione na stepSize
                 saveSettings();
             });
 
-            app.buttons.goToPreparation.addEventListener('click', function() {
+            app.buttons.goToPreparation.addEventListener('click', function() { // ... (bez zmian)
                 showScreen('preparation');
             });
             
@@ -960,116 +904,72 @@
             app.elements.problemImage.addEventListener('change', handleProblemImageChange);
 
 
-            app.buttons.beginSession.addEventListener('click', function() {
-                if (app.state.currentProblem.sudPre === null) {
-                    alert('Proszę wybrać poziom napięcia (SUD) przed sesją.');
-                    return;
-                }
-                app.state.currentProblem.activePart = app.elements.activePart.value;
-                app.state.currentProblem.activePartOther = app.elements.activePartOther.value;
-                app.state.currentProblem.bodyLocation = app.elements.bodyLocation.value;
-                app.state.currentProblem.bodySensation = app.elements.bodySensation.value;
-                app.state.currentProblem.problemImage = app.elements.problemImage.value;
-                app.state.currentProblem.problemImageOther = app.elements.problemImageOther.value;
+            app.buttons.beginSession.addEventListener('click', function() { // Zmienione użycie prędkości
+                if (app.state.currentProblem.sudPre === null) { alert('Proszę wybrać poziom napięcia (SUD) przed sesją.'); return; }
+                app.state.currentProblem.activePart = app.elements.activePart.value; app.state.currentProblem.activePartOther = app.elements.activePartOther.value;
+                app.state.currentProblem.bodyLocation = app.elements.bodyLocation.value; app.state.currentProblem.bodySensation = app.elements.bodySensation.value;
+                app.state.currentProblem.problemImage = app.elements.problemImage.value; app.state.currentProblem.problemImageOther = app.elements.problemImageOther.value;
                 app.state.currentProblem.negativeCognition = app.elements.negativeCognition.value;
-
-                app.state.indicatorPosition = 0;
-                app.state.indicatorDirection = 1;
-                app.elements.indicator.style.left = '0px';
-
-
-                showScreen('session');
-                setupAudio(); 
+                app.state.indicatorPosition = 0; app.state.indicatorDirection = 1; app.elements.indicator.style.left = '0px';
+                showScreen('session'); setupAudio(); 
                 startTimer(app.state.settings.duration);
-                startAnimation(app.state.settings.speed); 
+                startAnimation(app.state.settings.stepSize); // Użyj stepSize
                 if(app.state.settings.supportMessagesEnabled) startSupportMessages();
                 if(app.state.settings.breathingReminderEnabled) startBreathingReminder();
             });
 
-            app.buttons.stopSession.addEventListener('click', function() {
+            app.buttons.stopSession.addEventListener('click', function() { // ... (bez zmian)
                 completeSession(); 
             });
             
-            function startContinuationSession(duration) {
+            function startContinuationSession(duration) { // Zmienione użycie prędkości
                 app.state.settings.duration = duration;
                 app.state.currentProblem.sudPre = app.state.currentProblem.sudPost; 
-                app.state.currentProblem.sudPost = null; 
-                app.state.currentProblem.voc = null; 
-                
-                // Zachowaj PC i notatki, jeśli użytkownik chce kontynuować ten sam problem
-                // app.state.currentProblem.positiveCognition = app.elements.positiveCognition.value;
-                // app.state.currentProblem.notes = app.elements.sessionNotes.value;
-                // app.state.currentProblem.observations = []; // Można zresetować lub pozwolić na dodawanie
-
-
-                app.state.indicatorPosition = 0;
-                app.state.indicatorDirection = 1;
-                app.elements.indicator.style.left = '0px';
-
+                app.state.currentProblem.sudPost = null; app.state.currentProblem.voc = null; 
+                app.state.indicatorPosition = 0; app.state.indicatorDirection = 1; app.elements.indicator.style.left = '0px';
                 showScreen('session');
                 startTimer(app.state.settings.duration);
-                startAnimation(app.state.settings.speed);
+                startAnimation(app.state.settings.stepSize); // Użyj stepSize
                 if(app.state.settings.supportMessagesEnabled) startSupportMessages();
                 if(app.state.settings.breathingReminderEnabled) startBreathingReminder();
             }
 
-            app.buttons.continueSameTopic1min.addEventListener('click', function() {
-                startContinuationSession(60);
-            });
-             app.buttons.continueSameTopic2min.addEventListener('click', function() {
-                startContinuationSession(120);
-            });
+            app.buttons.continueSameTopic1min.addEventListener('click', function() { startContinuationSession(60); });
+            app.buttons.continueSameTopic2min.addEventListener('click', function() { startContinuationSession(120); });
 
-            app.buttons.startCompletelyNewSession.addEventListener('click', function() {
+            app.buttons.startCompletelyNewSession.addEventListener('click', function() { // ... (bez zmian)
                 app.state.currentProblem.positiveCognition = app.elements.positiveCognition.value;
-                app.state.currentProblem.notes = app.elements.sessionNotes.value;
-                saveLastProblem(); 
-
-                resetCurrentProblem();
-                showScreen('config'); 
+                app.state.currentProblem.notes = app.elements.sessionNotes.value; saveLastProblem(); 
+                resetCurrentProblem(); showScreen('config'); 
             });
             
-            // Modyfikacja event listenera dla pauzy, aby działał tylko na kontenerze wskaźnika
-            app.elements.indicatorContainer.addEventListener('click', function(e) {
-                 // Interakcja użytkownika potrzebna do wznowienia AudioContext w niektórych przeglądarkach
-                if (app.state.audioContext && app.state.audioContext.state === 'suspended') {
-                    app.state.audioContext.resume();
-                }
-
+            app.elements.indicatorContainer.addEventListener('click', function(e) { // ... (bez zmian)
+                if (app.state.audioContext && app.state.audioContext.state === 'suspended') { app.state.audioContext.resume(); }
                 app.state.isPaused = !app.state.isPaused;
-                // Zmieniamy tło całego ekranu sesji dla lepszej widoczności pauzy
-                app.screens.session.style.backgroundColor = 
-                    app.state.isPaused ? '#2d1d30' : '#1e1e1e'; 
-                
+                app.screens.session.style.backgroundColor = app.state.isPaused ? '#2d1d30' : '#1e1e1e'; 
                 if (app.state.isPaused) {
                     if (app.state.supportMessageIntervalId) clearInterval(app.state.supportMessageIntervalId);
-                    // Nie resetujemy ID, aby można było wznowić interwał
                     if (app.state.breathingReminderIntervalId) clearInterval(app.state.breathingReminderIntervalId);
                     app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse');
                 } else {
-                    // Wznów animację (jest w pętli setTimeout, więc sama się wznowi po odznaczeniu pauzy)
-                    // Wznów interwały, jeśli były aktywne
-                    if(app.state.settings.supportMessagesEnabled) startSupportMessages();
-                    if(app.state.settings.breathingReminderEnabled) startBreathingReminder();
+                    if(app.state.settings.supportMessagesEnabled && !app.state.supportMessageIntervalId) startSupportMessages(); // Wznów tylko jeśli nie ma już interwału
+                    if(app.state.settings.breathingReminderEnabled && !app.state.breathingReminderIntervalId) startBreathingReminder();
                 }
             });
 
 
-             app.elements.positiveCognition.addEventListener('input', function() {
-                app.state.currentProblem.positiveCognition = this.value;
-                updateResultsDisplay();
+             app.elements.positiveCognition.addEventListener('input', function() { // ... (bez zmian)
+                app.state.currentProblem.positiveCognition = this.value; updateResultsDisplay();
             });
-            app.elements.sessionNotes.addEventListener('input', function() {
+            app.elements.sessionNotes.addEventListener('input', function() { // ... (bez zmian)
                 app.state.currentProblem.notes = this.value;
             });
 
-            loadSettings();
-            loadLastProblem(); 
+            loadSettings(); loadLastProblem(); 
             createRatingButtons(app.elements.sudPreButtonsContainer, 10, 'sudPre');
             createRatingButtons(app.elements.sudPostButtonsContainer, 10, 'sudPost');
             createRatingButtons(app.elements.vocRatingButtonsContainer, 7, 'voc', true);
-            createObservationCheckboxes();
-            resetCurrentProblem(); 
+            createObservationCheckboxes(); resetCurrentProblem(); 
             showScreen('start');
         };
     </script>

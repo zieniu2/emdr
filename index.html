@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMDR Self-Help - Redukuj Napięcie</title>
+    <title>EMDR Self-Help Plus - Wsparcie Terapeutyczne</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,36 +12,52 @@
             color: white;
             padding: 20px;
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            box-sizing: border-box;
         }
         
         .container {
             max-width: 100%;
-            width: 100%;
-            padding: 0 20px;
+            width: 600px; /* Ograniczenie szerokości dla lepszej czytelności na desktopie */
+            padding: 0 15px;
+            box-sizing: border-box;
         }
         
         button {
-            background-color: #9c27b0;
+            background-color: #9c27b0; /* Główny kolor akcji */
             color: white;
             border: none;
-            padding: 15px 30px;
-            margin: 10px;
+            padding: 12px 25px;
+            margin: 10px 5px;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
         
         button:hover {
-            background-color: #7b1fa2;
+            background-color: #7b1fa2; /* Ciemniejszy odcień przy najechaniu */
+        }
+
+        button.secondary {
+            background-color: #555;
+        }
+        button.secondary:hover {
+            background-color: #444;
         }
         
         .screen {
             display: none;
+            width: 100%;
+            background-color: #1e1e1e; /* Tło dla sekcji */
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-sizing: border-box;
         }
         
         .active {
@@ -49,291 +65,616 @@
         }
         
         .indicator {
-            width: 50px;
-            height: 50px;
-            background-color: #ff5722;
+            width: 40px; /* Mniejszy wskaźnik */
+            height: 40px;
+            background-color: #ff5722; /* Kolor wskaźnika */
             border-radius: 50%;
             position: absolute;
             left: 0;
+            box-shadow: 0 0 10px #ff5722;
         }
         
         .indicator-container {
             width: 100%;
-            height: 60px;
-            background-color: #1e1e1e;
+            height: 50px; /* Mniejsza wysokość kontenera */
+            background-color: #2c2c2c; /* Ciemniejsze tło dla kontrastu */
             border-radius: 5px;
-            margin: 30px 0;
+            margin: 20px 0;
             position: relative;
             overflow: hidden;
         }
         
         .timer {
-            font-size: 24px;
-            margin: 20px 0;
+            font-size: 22px; /* Mniejszy timer */
+            margin: 15px 0;
         }
         
+        .rating-button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom:15px;
+        }
         .rating-button {
             display: inline-block;
-            width: 30px;
-            height: 30px;
-            line-height: 30px;
+            width: 35px; /* Rozmiar przycisku oceny */
+            height: 35px;
+            line-height: 35px;
             text-align: center;
             background-color: #333;
             color: white;
             border-radius: 50%;
             margin: 5px;
             cursor: pointer;
+            font-size: 14px;
         }
         
         .rating-button.selected {
-            background-color: #ff5722;
+            background-color: #ff5722; /* Kolor wybranego przycisku oceny */
+            font-weight: bold;
+        }
+
+        /* Style dla formularzy */
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            text-align: left;
+            font-weight: bold;
+            color: #ccc;
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: white;
+            font-size: 16px;
+        }
+        textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        .checkbox-item, .radio-item {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+        .checkbox-item input[type="checkbox"],
+        .radio-item input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.3);
+            cursor: pointer;
+        }
+        .checkbox-item label,
+        .radio-item label {
+            font-weight: normal;
+            color: white;
+            cursor: pointer;
+            margin-top: 0;
+        }
+
+        .support-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .support-message.visible {
+            opacity: 1;
+        }
+        .breathing-reminder-pulse {
+            animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px #9c27b0; }
+            50% { box-shadow: 0 0 15px #c039de; }
+            100% { box-shadow: 0 0 5px #9c27b0; }
+        }
+        .header-logo { /* Styl dla tytułu/logo */
+             font-size: 28px;
+             font-weight: bold;
+             color: #e0e0e0; /* Jasnoszary kolor dla tytułu */
+             margin-bottom: 5px;
+        }
+        .header-subtitle { /* Styl dla podtytułu */
+            font-size: 16px;
+            color: #aaa; /* Ciemniejszy szary dla podtytułu */
+            margin-bottom: 25px;
+        }
+        .info-box {
+            background-color: #2a2a2a; /* Nieco jaśniejsze tło dla wyróżnienia */
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 14px;
+            border-left: 3px solid #9c27b0; /* Akcent kolorystyczny */
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #e0e0e0;
+        }
+        .info-box ul {
+            list-style-type: none;
+            padding-left: 5px;
+        }
+         .info-box ul li::before {
+            content: "•";
+            color: #9c27b0; /* Kolor punktora */
+            font-weight: bold;
+            display: inline-block; 
+            width: 1em;
+            margin-left: -1em;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Start Screen -->
+        <h1 class="header-logo">EMDR Self-Help Plus</h1>
+        <p class="header-subtitle">Twoje narzędzie wsparcia terapeutycznego</p>
+
         <div id="startScreen" class="screen active">
-            <h1>EMDR Self-Help</h1>
-            <p style="margin-bottom: 20px;">Narzędzie do szybkiego rozładowania napięcia</p>
-            
-            <div style="background-color: #1e1e1e; padding: 15px; border-radius: 10px; text-align: left; margin-bottom: 20px; line-height: 1.5;">
-                <p><strong>Narzędzie to pomoże Ci:</strong></p>
-                <ul style="list-style-type: none; padding-left: 5px; margin-top: 10px;">
-                    <li>• Przełamać blokady perfekcjonizmu</li>
-                    <li>• Rozładować napięcie przed wymagającymi zadaniami</li>
-                    <li>• Zmniejszyć reaktywność emocjonalną</li>
-                    <li>• Wrócić do stanu równowagi</li>
+            <div class="info-box">
+                <h3>Witaj Tomaszu,</h3>
+                <p>Ta aplikacja została dostosowana, aby wspierać Cię w Twoim procesie terapeutycznym, szczególnie w momentach, gdy:</p>
+                <ul>
+                    <li>Pojawia się impuls ucieczki przed trudnymi zadaniami (np. retusz, publikacje).</li>
+                    <li>Odczuwasz lęk przed oceną lub presję perfekcjonizmu.</li>
+                    <li>Chcesz lepiej zrozumieć i zintegrować swoje wewnętrzne części.</li>
                 </ul>
+                <p>Pamiętaj, że to narzędzie ma Cię wspierać, a praca z obrazami i odczuciami w ciele jest kluczowa.</p>
             </div>
             
-            <p style="font-size: 14px; color: #aaa; margin-bottom: 20px;">Metoda EMDR (Eye Movement Desensitization and Reprocessing) pomaga w przepracowaniu trudnych emocji i odczuć poprzez stymulację bilateralną.</p>
-            
-            <div style="margin-bottom: 20px;">
-                <label style="display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <div>
+                <label style="display: flex; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 5px;">
                     <input type="checkbox" id="soundToggle" checked style="margin-right: 10px; transform: scale(1.5);">
                     <span>Włącz stymulację dźwiękową</span>
                 </label>
-                <p style="font-size: 12px; color: #aaa; margin-top: 5px;">(dla lepszego efektu używaj słuchawek)</p>
+                <p style="font-size: 12px; color: #aaa; margin-top: 0px; margin-bottom:15px;">(dla lepszego efektu używaj słuchawek)</p>
+
+                <label style="display: flex; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 5px;">
+                    <input type="checkbox" id="supportMessagesToggle" style="margin-right: 10px; transform: scale(1.5);">
+                    <span>Włącz komunikaty wsparcia podczas sesji</span>
+                </label>
+                 <p style="font-size: 12px; color: #aaa; margin-top: 0px; margin-bottom:15px;">(np. "Jestem tu z Tobą")</p>
+
+                <label style="display: flex; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 15px;">
+                    <input type="checkbox" id="breathingReminderToggle" style="margin-right: 10px; transform: scale(1.5);">
+                    <span>Włącz przypomnienie o oddechu</span>
+                </label>
             </div>
             
-            <button id="startButton">Rozpocznij sesję</button>
+            <button id="newSessionSetupButton">Rozpocznij Nową Sesję</button>
+            <button id="quickStartButton" class="secondary">Szybki Start (ostatni problem)</button>
+        </div>
+
+        <div id="configScreen" class="screen">
+            <h2>Ustawienia Sesji</h2>
+            <label for="sessionDuration">Długość sesji:</label>
+            <select id="sessionDuration">
+                <option value="30">30 sekund</option>
+                <option value="60" selected>1 minuta</option>
+                <option value="120">2 minuty</option>
+                <option value="300">5 minut</option>
+                <option value="600">10 minut</option>
+            </select>
+
+            <label for="indicatorSpeed">Prędkość wskaźnika:</label>
+            <select id="indicatorSpeed">
+                <option value="18">Wolno</option> <option value="12" selected>Średnio</option>
+                <option value="8">Szybko</option> 
+            </select>
+            <p style="font-size: 12px; color: #aaa; margin-top: 0px; margin-bottom:15px;">(Szybko = mniejsza wartość opóźnienia)</p>
+
+
+            <button id="goToPreparationButton">Przejdź do Przygotowania</button>
         </div>
         
-        <!-- Rating Screen -->
-        <div id="ratingScreen" class="screen">
-            <h1>Przygotowanie do sesji EMDR</h1>
+        <div id="preparationScreen" class="screen">
+            <h2>Przygotowanie do Sesji</h2>
             
-            <div style="background-color: #1e1e1e; padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 20px; line-height: 1.6;">
-                <h2 style="margin-bottom: 10px;">Instrukcja przed sesją:</h2>
-                
-                <p>1. <strong>Zajmij wygodną pozycję</strong> - usiądź prosto, ale komfortowo.</p>
-                
-                <p>2. <strong>Skup się na problemie</strong> - pomyśl o konkretnej sytuacji, która wywołuje napięcie (np. moment gdy siadasz do retuszu i czujesz presję perfekcjonizmu).</p>
-                
-                <p>3. <strong>Zwróć uwagę na swoje ciało</strong> - gdzie dokładnie czujesz napięcie? W klatce piersiowej? W brzuchu? W ramionach? Zaobserwuj to uczucie.</p>
-                
-                <p>4. <strong>Wyobraź sobie scenę</strong> - przypomnij sobie jak najdokładniej sytuację, która wywołuje niepokój. Jakie obrazy widzisz? Jakie słyszysz głosy? Jakie myśli się pojawiają?</p>
-                
-                <p>5. <strong>Przyjmij to uczucie</strong> - nie walcz z nim, po prostu zaakceptuj że jest obecne.</p>
+            <div class="info-box">
+                <p>1. <strong>Zajmij wygodną pozycję.</strong></p>
+                <p>2. <strong>Określ, co teraz dominuje</strong> lub z czym chcesz pracować.</p>
+                <p>3. <strong>Skup się na odczuciach w ciele</strong> i obrazach, które się pojawiają.</p>
             </div>
+
+            <label for="activePart">Co teraz w Tobie dominuje / z czym chcesz pracować?</label>
+            <select id="activePart">
+                <option value="">Wybierz...</option>
+                <option value="impuls_ucieczki">Impuls ucieczki / unikania zadania (np. retuszu, publikacji)</option>
+                <option value="lek_presja">Lęk / presja związana z zadaniem</option>
+                <option value="obawa_oceny">Obawa przed oceną / krytyką</option>
+                <option value="cien_pogardy">Głos wewnętrznego krytyka / "Cień pogardy"</option>
+                <option value="lekliwy_chlopiec">Poczucie bycia małym / "Lękliwy chłopiec"</option>
+                <option value="agresywny_chlopiec">Złość / frustracja / "Agresywny chłopiec w cieniu"</option>
+                <option value="inne">Inne (opisz poniżej)</option>
+            </select>
+            <textarea id="activePartOther" placeholder="Opisz, jeśli wybrałeś 'Inne'" style="display:none;"></textarea>
+
+            <div id="therapeuticPrompts" class="info-box" style="display:none; margin-top:15px;">
+                </div>
+
+            <label for="bodyLocation">Gdzie w ciele to teraz czujesz najmocniej?</label>
+            <input type="text" id="bodyLocation" placeholder="Np. gardło, kark, brzuch, klatka piersiowa...">
             
-            <p>Na skali od 1 do 10, jak silne jest Twoje napięcie związane z tą sytuacją?</p>
-            <div id="ratingButtons">
-                <div class="rating-button" data-value="1">1</div>
-                <div class="rating-button" data-value="2">2</div>
-                <div class="rating-button" data-value="3">3</div>
-                <div class="rating-button" data-value="4">4</div>
-                <div class="rating-button" data-value="5">5</div>
-                <div class="rating-button" data-value="6">6</div>
-                <div class="rating-button" data-value="7">7</div>
-                <div class="rating-button" data-value="8">8</div>
-                <div class="rating-button" data-value="9">9</div>
-                <div class="rating-button" data-value="10">10</div>
-            </div>
-            <button id="beginButton">Rozpocznij ruch wskaźnika</button>
+            <label for="bodySensation">Jakie to uczucie? (np. kamień, drut, wir, ciężar)</label>
+            <input type="text" id="bodySensation" placeholder="Opisz uczucie...">
+
+            <label for="problemImage">Jaki obraz najlepiej reprezentuje to, co teraz czujesz / tę część Ciebie?</label>
+            <select id="problemImage">
+                <option value="">Wybierz obraz...</option>
+                <option value="lekliwy_chlopiec_obraz">Lękliwy chłopiec (skulony, niepewny)</option>
+                <option value="agresywny_chlopiec_obraz">Agresywny chłopiec (z mrocznym cieniem samuraja)</option>
+                <option value="cien_pogardy_obraz">Cień pogardy (zimne, oceniające spojrzenie)</option>
+                <option value="ja_przy_komputerze_presja">Ja przy komputerze, czujący presję</option>
+                <option value="inne_obraz">Inny (opisz poniżej)</option>
+            </select>
+            <textarea id="problemImageOther" placeholder="Opisz obraz, jeśli wybrałeś 'Inny'" style="display:none;"></textarea>
+
+            <label for="negativeCognition">Jaka negatywna myśl lub przekonanie o sobie (NC) towarzyszy temu obrazowi/uczuciu?</label>
+            <input type="text" id="negativeCognition" list="nc_suggestions" placeholder="Wpisz lub wybierz z sugestii...">
+            <datalist id="nc_suggestions">
+                <option value="Nie dasz rady, po co próbować">
+                <option value="Muszę zasłużyć, żeby być zauważonym">
+                <option value="Zniknij. Tylko tak będziesz bezpieczny.">
+                <option value="Jestem niewystarczający/a">
+                <option value="Coś jest ze mną nie tak">
+                <option value="Jestem do niczego">
+                <option value="Nie jestem dość dobry/a">
+            </datalist>
+            
+            <label for="sudPre">Na skali od 0 (brak) do 10 (maksimum), jak silny jest Twój dyskomfort/napięcie (SUD)?</label>
+            <div id="sudPreButtons" class="rating-button-group">
+                </div>
+            <button id="beginSessionButton">Rozpocznij Ruch Wskaźnika</button>
         </div>
         
-        <!-- Session Screen -->
         <div id="sessionScreen" class="screen">
-            <h1>Śledź wzrokiem poruszający się wskaźnik</h1>
-            <div style="margin-bottom: 10px; font-size: 16px;">Utrzymuj głowę nieruchomo. Śledź kulkę tylko oczami.</div>
+            <h2 style="margin-bottom: 5px;">Śledź Wzrokiem Wskaźnik</h2>
+            <p style="font-size: 14px; color: #aaa; margin-top:0; margin-bottom: 10px;">Utrzymuj głowę nieruchomo. Skup się na odczuciach w ciele i pozwól myślom swobodnie płynąć.</p>
             <div class="timer" id="timerDisplay">01:00</div>
-            <div class="indicator-container">
+            <div class="indicator-container" id="indicatorContainer">
                 <div id="indicator" class="indicator"></div>
             </div>
-            <p style="margin-top: 20px;">Jednocześnie skup się na odczuciach w ciele i pozwól myślom swobodnie płynąć.</p>
-            <p style="margin-top: 5px; color: #aaa;">Dotknij ekranu aby zatrzymać/wznowić</p>
-            <button id="stopButton">Zakończ sesję</button>
+            <p style="font-size: 12px; color: #aaa; margin-top: 15px;">Dotknij tła aby zatrzymać/wznowić</p>
+            <button id="stopSessionButton" class="secondary">Zakończ Sesję Przed Czasem</button>
         </div>
+        <div id="supportMessageDisplay" class="support-message"></div>
         
-        <!-- End Screen -->
         <div id="endScreen" class="screen">
-            <h1>Sesja zakończona</h1>
-            
-            <div style="background-color: #1e1e1e; padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 20px; line-height: 1.6;">
-                <h2 style="margin-bottom: 10px;">Instrukcje po sesji:</h2>
-                
+            <h2>Sesja Zakończona</h2>
+             <div class="info-box">
                 <p>1. <strong>Weź głęboki oddech</strong> - wykonaj 3 głębokie wdechy i wydechy.</p>
-                
-                <p>2. <strong>Sprawdź swoje ciało</strong> - zauważ, jak teraz czuje się twoje ciało. Czy napięcie zmieniło miejsce? Czy zmniejszyło się? A może zniknęło?</p>
-                
-                <p>3. <strong>Przypomnij sobie problematyczną sytuację</strong> - spróbuj przywołać tę samą scenę, o której myślałeś na początku. Czy wywołuje te same uczucia?</p>
-                
-                <p>4. <strong>Zauważ zmiany</strong> - czy teraz myślisz o tej sytuacji inaczej? Czy pojawiły się nowe myśli? Jak zmieniły się emocje?</p>
-                
-                <p>5. <strong>Zakotwicz nowy stan</strong> - jeśli czujesz się lepiej, zwróć uwagę na to uczucie. Możesz dotknąć kciukiem i palcem wskazującym, tworząc "kotwicę" dla tego stanu.</p>
+                <p>2. <strong>Sprawdź swoje ciało</strong> - zauważ, jak teraz czuje się twoje ciało.</p>
+                <p>3. <strong>Przypomnij sobie problematyczną sytuację/część</strong> - czy coś się zmieniło?</p>
             </div>
-            
-            <p>Jak oceniasz swoje napięcie teraz?</p>
-            <div id="endRatingButtons">
-                <div class="rating-button" data-value="1">1</div>
-                <div class="rating-button" data-value="2">2</div>
-                <div class="rating-button" data-value="3">3</div>
-                <div class="rating-button" data-value="4">4</div>
-                <div class="rating-button" data-value="5">5</div>
-                <div class="rating-button" data-value="6">6</div>
-                <div class="rating-button" data-value="7">7</div>
-                <div class="rating-button" data-value="8">8</div>
-                <div class="rating-button" data-value="9">9</div>
-                <div class="rating-button" data-value="10">10</div>
-            </div>
-            
-            <div style="background-color: #1e1e1e; padding: 15px; border-radius: 10px; text-align: left; margin: 20px 0; line-height: 1.6;">
-                <h3 style="margin-bottom: 10px;">Co zaobserwowałeś podczas sesji?</h3>
-                <p style="font-size: 14px; margin-bottom: 10px; color: #aaa;">Zaznacz wszystkie odpowiedzi, które do Ciebie pasują:</p>
-                
-                <div id="observationsContainer" style="display: flex; flex-direction: column; align-items: flex-start;">
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs1" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs1">Czułem fizyczne rozluźnienie w ciele</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs2" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs2">Zauważyłem zmianę miejsca napięcia w ciele</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs3" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs3">Nie zauważyłem fizycznych zmian</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs4" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs4">Moje myśli stały się spokojniejsze</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs5" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs5">Miałem trudności z utrzymaniem koncentracji</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs6" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs6">Pojawiły się nowe myśli/perspektywy</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs7" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs7">Problem wydaje się teraz mniej ważny</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs8" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs8">Odczuwam większą pewność siebie w kwestii problemu</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs9" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs9">Łatwiej mi myśleć o rozwiązaniach</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs10" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs10">Oddychanie stało się głębsze/spokojniejsze</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs11" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs11">Czuję, że potrzebuję więcej sesji</label>
-                    </div>
-                    
-                    <div class="checkbox-item" style="margin: 5px 0; display: flex; align-items: center;">
-                        <input type="checkbox" id="obs12" style="margin-right: 10px; transform: scale(1.3);">
-                        <label for="obs12">Nie zauważyłem żadnych zmian</label>
-                    </div>
+
+            <label for="sudPost">Jak oceniasz swój dyskomfort/napięcie (SUD) teraz (0-10)?</label>
+            <div id="sudPostButtons" class="rating-button-group">
                 </div>
+
+            <label for="positiveCognition">Jakie pozytywne przekonanie o sobie (PC) chciałbyś teraz przyjąć?</label>
+            <input type="text" id="positiveCognition" list="pc_suggestions" placeholder="Np. Mogę sobie poradzić, Jestem wystarczający...">
+             <datalist id="pc_suggestions">
+                <option value="Mogę sobie z tym poradzić">
+                <option value="Jestem wystarczający/a taki, jaki jestem">
+                <option value="Mam prawo tu być i czuć">
+                <option value="Potrafię zaopiekować się sobą">
+                <option value="Jestem obecny dla siebie">
+                <option value="Uczę się i rozwijam">
+            </datalist>
+
+            <label for="vocRating">Na ile prawdziwe wydaje Ci się to PC? (1=wcale, 7=całkowicie)</label>
+            <div id="vocRatingButtons" class="rating-button-group">
+                </div>
+            
+            <div id="resultsDisplay" style="margin-top: 20px; margin-bottom:20px; font-size: 14px;"></div>
+
+            <label for="sessionNotes">Twoje notatki / Co jeszcze zauważyłeś?</label>
+            <textarea id="sessionNotes" placeholder="Twoje myśli, odczucia, obrazy..."></textarea>
+            
+            <div class="info-box">
+                <h3>Co Zaobserwowałeś?</h3>
+                <div id="observationsContainer" style="display: flex; flex-direction: column; align-items: flex-start;">
+                    </div>
+            </div>
+             <div class="info-box">
+                <h3>Co Teraz?</h3>
+                <p id="nextStepsText">Przeanalizuj wyniki i zdecyduj o następnym kroku.</p>
+                <ul>
+                    <li>Jeśli napięcie znacznie się zmniejszyło (np. SUD spadł o 3+ pkt, PC wydaje się prawdziwe), możesz zakończyć lub przejść do zadania.</li>
+                    <li>Rozważ powrót do obrazu "Dorosłego Tomasza" trzymającego wewnętrzne dzieci.</li>
+                    <li>Jeśli napięcie jest nadal wysokie, rozważ kolejną krótką sesję na ten sam temat lub inny jego aspekt.</li>
+                </ul>
             </div>
             
-            <div id="results" style="margin-top: 20px;"></div>
-            
-            <div style="background-color: #1e1e1e; padding: 15px; border-radius: 10px; text-align: left; margin: 20px 0; line-height: 1.6;">
-                <p><strong>Co teraz?</strong></p>
-                <p>• Jeśli napięcie znacznie się zmniejszyło (3+ punktów), możesz przejść do zadania.</p>
-                <p>• Jeśli napięcie zmniejszyło się nieznacznie (1-2 punkty), rozważ przeprowadzenie jeszcze jednej sesji.</p>
-                <p>• Jeśli napięcie nie zmieniło się lub wzrosło, spróbuj zidentyfikować inny aspekt problemu i przeprowadź nową sesję.</p>
-            </div>
-            
-            <button id="newSessionButton">Nowa sesja</button>
+            <button id="continueSameTopic1minButton">Kontynuuj (ten sam temat, 1 min)</button>
+            <button id="continueSameTopic2minButton">Kontynuuj (ten sam temat, 2 min)</button>
+            <button id="startCompletelyNewSessionButton" class="secondary">Zupełnie Nowa Sesja</button>
         </div>
     </div>
 
     <script>
-        // Czekamy na załadowanie dokumentu
         window.onload = function() {
-            // Zmienne globalne aplikacji
             var app = {
                 screens: {
                     start: document.getElementById('startScreen'),
-                    rating: document.getElementById('ratingScreen'),
+                    config: document.getElementById('configScreen'),
+                    preparation: document.getElementById('preparationScreen'),
                     session: document.getElementById('sessionScreen'),
                     end: document.getElementById('endScreen')
                 },
                 buttons: {
-                    start: document.getElementById('startButton'),
-                    begin: document.getElementById('beginButton'),
-                    stop: document.getElementById('stopButton'),
-                    newSession: document.getElementById('newSessionButton')
+                    newSessionSetup: document.getElementById('newSessionSetupButton'),
+                    quickStart: document.getElementById('quickStartButton'),
+                    goToPreparation: document.getElementById('goToPreparationButton'),
+                    beginSession: document.getElementById('beginSessionButton'),
+                    stopSession: document.getElementById('stopSessionButton'),
+                    continueSameTopic1min: document.getElementById('continueSameTopic1minButton'),
+                    continueSameTopic2min: document.getElementById('continueSameTopic2minButton'),
+                    startCompletelyNewSession: document.getElementById('startCompletelyNewSessionButton')
                 },
                 elements: {
+                    soundToggle: document.getElementById('soundToggle'),
+                    supportMessagesToggle: document.getElementById('supportMessagesToggle'),
+                    breathingReminderToggle: document.getElementById('breathingReminderToggle'),
+                    sessionDuration: document.getElementById('sessionDuration'),
+                    indicatorSpeed: document.getElementById('indicatorSpeed'),
+                    activePart: document.getElementById('activePart'),
+                    activePartOther: document.getElementById('activePartOther'),
+                    therapeuticPrompts: document.getElementById('therapeuticPrompts'),
+                    bodyLocation: document.getElementById('bodyLocation'),
+                    bodySensation: document.getElementById('bodySensation'),
+                    problemImage: document.getElementById('problemImage'),
+                    problemImageOther: document.getElementById('problemImageOther'),
+                    negativeCognition: document.getElementById('negativeCognition'),
+                    sudPreButtonsContainer: document.getElementById('sudPreButtons'),
                     indicator: document.getElementById('indicator'),
+                    indicatorContainer: document.getElementById('indicatorContainer'),
                     timerDisplay: document.getElementById('timerDisplay'),
-                    results: document.getElementById('results'),
-                    soundToggle: document.getElementById('soundToggle')
-                },
-                ratings: {
-                    preButtons: document.querySelectorAll('#ratingButtons .rating-button'),
-                    postButtons: document.querySelectorAll('#endRatingButtons .rating-button')
+                    supportMessageDisplay: document.getElementById('supportMessageDisplay'),
+                    sudPostButtonsContainer: document.getElementById('sudPostButtons'),
+                    positiveCognition: document.getElementById('positiveCognition'),
+                    vocRatingButtonsContainer: document.getElementById('vocRatingButtons'),
+                    resultsDisplay: document.getElementById('resultsDisplay'),
+                    sessionNotes: document.getElementById('sessionNotes'),
+                    observationsContainer: document.getElementById('observationsContainer'),
+                    nextStepsText: document.getElementById('nextStepsText')
                 },
                 state: {
-                    timeRemaining: 60,
-                    preRating: null,
-                    postRating: null,
+                    settings: {
+                        duration: 60, // default 1 min
+                        speed: 12,    // default medium (niższa wartość = szybszy ruch w kodzie animacji)
+                        soundEnabled: true,
+                        supportMessagesEnabled: false,
+                        breathingReminderEnabled: false,
+                    },
+                    currentProblem: {
+                        activePart: '', activePartOther: '',
+                        bodyLocation: '', bodySensation: '',
+                        problemImage: '', problemImageOther: '',
+                        negativeCognition: '', sudPre: null,
+                        positiveCognition: '', voc: null, sudPost: null,
+                        notes: '', observations: []
+                    },
+                    lastProblem: null, // For quick start
                     isPaused: false,
                     timerId: null,
-                    animationId: null,
-                    soundEnabled: true,
-                    audioContext: null
+                    animationFrameId: null,
+                    audioContext: null,
+                    supportMessageIntervalId: null,
+                    breathingReminderIntervalId: null,
+                    indicatorDirection: 1,
+                    indicatorPosition: 0,
+                },
+                // From Terapia-wskazówki AI do sesji terapeutycznej.rtf
+                therapeuticData: {
+                    prompts: {
+                        cien_pogardy: "Skup się na tym zimnym, oceniającym spojrzeniu. Gdzie je czujesz w ciele? Jaki impuls w Tobie uruchamia? Pamiętaj, że Dorosły Ty może być obecny przy tej części, nie musisz jej zmieniać.",
+                        lekliwy_chlopiec: "Zobacz tego małego, lękliwego chłopca. Czego się boi? Czego potrzebuje? Jak Dorosły Ty możesz mu towarzyszyć z obecnością i współczuciem?",
+                        agresywny_chlopiec: "Poczuj energię tego 'agresywnego chłopca w cieniu'. Co kryje się za tą siłą? Jaki lęk lub potrzeba? Dorosły Ty może spotkać tę część z ciekawością.",
+                        impuls_ucieczki: "Zauważ ten impuls do ucieczki. Gdzie go czujesz w ciele? Zamiast działać automatycznie, spróbuj być z tym uczuciem przez chwilę. Co się pojawi, gdy nie uciekniesz?",
+                        obawa_oceny: "Poczuj tę obawę przed oceną. Jakie myśli jej towarzyszą? Jaki obraz siebie widzisz w tej sytuacji? Dorosły Ty może spojrzeć na to z dystansem i współczuciem."
+                    },
+                    supportMessages: [
+                        "Jestem tu z Tobą.",
+                        "Nie musisz tego zmieniać, po prostu bądź.",
+                        "Widzę Cię.",
+                        "Jesteś bezpieczny/a, by to czuć.",
+                        "Pozwól, by to płynęło.",
+                        "Oddychaj w to miejsce.",
+                        "Nie przyszedłem Cię zmieniać. Przyszedłem, żeby z Tobą być."
+                    ],
+                    observations: [
+                        "Czułem fizyczne rozluźnienie w ciele", "Zauważyłem zmianę miejsca napięcia w ciele",
+                        "Nie zauważyłem fizycznych zmian", "Moje myśli stały się spokojniejsze",
+                        "Miałem trudności z utrzymaniem koncentracji", "Pojawiły się nowe myśli/perspektywy",
+                        "Problem wydaje się teraz mniej ważny", "Odczuwam większą pewność siebie w kwestii problemu",
+                        "Łatwiej mi myśleć o rozwiązaniach", "Oddychanie stało się głębsze/spokojniejsze",
+                        "Poczułem większy kontakt z 'Dorosłym Ja'", "Nie zauważyłem żadnych zmian",
+                        "Potrzebuję więcej pracy z tym tematem"
+                    ]
                 }
             };
-            
-            // Funkcja pokazująca wybrany ekran
+
             function showScreen(screenId) {
-                // Ukryj wszystkie ekrany
                 for (var key in app.screens) {
-                    if (app.screens.hasOwnProperty(key)) {
-                        app.screens[key].classList.remove('active');
-                    }
+                    app.screens[key].classList.remove('active');
                 }
-                
-                // Pokaż wybrany ekran
                 app.screens[screenId].classList.add('active');
+                window.scrollTo(0, 0); // Przewiń na górę strony
+            }
+
+            function createRatingButtons(container, maxRating, stateProperty, isVoc = false) {
+                container.innerHTML = '';
+                for (let i = (isVoc ? 1 : 0); i <= maxRating; i++) {
+                    let btn = document.createElement('div');
+                    btn.classList.add('rating-button');
+                    btn.textContent = i;
+                    btn.dataset.value = i;
+                    btn.addEventListener('click', function() {
+                        Array.from(container.children).forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
+                        app.state.currentProblem[stateProperty] = parseInt(this.dataset.value);
+                        if (stateProperty === 'sudPost' || stateProperty === 'voc') updateResultsDisplay();
+                    });
+                    container.appendChild(btn);
+                }
             }
             
-            // Funkcja obsługująca timer
-            function startTimer() {
-                app.state.timeRemaining = 60;
+            function createObservationCheckboxes() {
+                app.elements.observationsContainer.innerHTML = '';
+                app.therapeuticData.observations.forEach((obsText, index) => {
+                    const id = `obs${index}`;
+                    const div = document.createElement('div');
+                    div.className = 'checkbox-item';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = id;
+                    input.value = obsText;
+                    input.addEventListener('change', function() {
+                        if (this.checked) {
+                            if (!app.state.currentProblem.observations.includes(this.value)) {
+                                app.state.currentProblem.observations.push(this.value);
+                            }
+                        } else {
+                            app.state.currentProblem.observations = app.state.currentProblem.observations.filter(item => item !== this.value);
+                        }
+                    });
+
+                    const label = document.createElement('label');
+                    label.htmlFor = id;
+                    label.textContent = obsText;
+
+                    div.appendChild(input);
+                    div.appendChild(label);
+                    app.elements.observationsContainer.appendChild(div);
+                });
+            }
+
+            function resetCurrentProblem() {
+                app.state.currentProblem = {
+                    activePart: '', activePartOther: '',
+                    bodyLocation: '', bodySensation: '',
+                    problemImage: '', problemImageOther: '',
+                    negativeCognition: '', sudPre: null,
+                    positiveCognition: '', voc: null, sudPost: null,
+                    notes: '', observations: []
+                };
+                // Reset UI elements related to currentProblem
+                app.elements.activePart.value = '';
+                app.elements.activePartOther.value = ''; app.elements.activePartOther.style.display = 'none';
+                app.elements.therapeuticPrompts.style.display = 'none'; app.elements.therapeuticPrompts.textContent = '';
+                app.elements.bodyLocation.value = '';
+                app.elements.bodySensation.value = '';
+                app.elements.problemImage.value = '';
+                app.elements.problemImageOther.value = ''; app.elements.problemImageOther.style.display = 'none';
+                app.elements.negativeCognition.value = '';
+                app.elements.positiveCognition.value = '';
+                app.elements.sessionNotes.value = '';
+                
+                Array.from(app.elements.sudPreButtonsContainer.children).forEach(b => b.classList.remove('selected'));
+                Array.from(app.elements.sudPostButtonsContainer.children).forEach(b => b.classList.remove('selected'));
+                Array.from(app.elements.vocRatingButtonsContainer.children).forEach(b => b.classList.remove('selected'));
+                Array.from(app.elements.observationsContainer.querySelectorAll('input[type="checkbox"]')).forEach(cb => cb.checked = false);
+                app.elements.resultsDisplay.innerHTML = '';
+            }
+            
+            function populatePreparationScreenFromProblem(problem) {
+                 if (!problem) return;
+                app.elements.activePart.value = problem.activePart || '';
+                handleActivePartChange(); // To show/hide other field and prompts
+                app.elements.activePartOther.value = problem.activePartOther || '';
+                app.elements.bodyLocation.value = problem.bodyLocation || '';
+                app.elements.bodySensation.value = problem.bodySensation || '';
+                app.elements.problemImage.value = problem.problemImage || '';
+                handleProblemImageChange(); // To show/hide other field
+                app.elements.problemImageOther.value = problem.problemImageOther || '';
+                app.elements.negativeCognition.value = problem.negativeCognition || '';
+                if (problem.sudPre !== null) {
+                    const btn = app.elements.sudPreButtonsContainer.querySelector(`.rating-button[data-value="${problem.sudPre}"]`);
+                    if (btn) btn.click(); // Simulate click to select
+                }
+            }
+
+            // --- Settings and localStorage ---
+            function saveSettings() {
+                localStorage.setItem('emdrAppSettings', JSON.stringify(app.state.settings));
+            }
+
+            function loadSettings() {
+                const saved = localStorage.getItem('emdrAppSettings');
+                if (saved) {
+                    app.state.settings = JSON.parse(saved);
+                }
+                // Apply loaded settings to UI
+                app.elements.sessionDuration.value = app.state.settings.duration;
+                app.elements.indicatorSpeed.value = app.state.settings.speed;
+                app.elements.soundToggle.checked = app.state.settings.soundEnabled;
+                app.elements.supportMessagesToggle.checked = app.state.settings.supportMessagesEnabled;
+                app.elements.breathingReminderToggle.checked = app.state.settings.breathingReminderEnabled;
+            }
+
+            function saveLastProblem() {
+                localStorage.setItem('emdrAppLastProblem', JSON.stringify(app.state.currentProblem));
+            }
+            function loadLastProblem() {
+                const saved = localStorage.getItem('emdrAppLastProblem');
+                if (saved) {
+                    app.state.lastProblem = JSON.parse(saved);
+                } else {
+                    app.state.lastProblem = null;
+                }
+            }
+
+            // --- Therapeutic Prompts Logic ---
+            function handleActivePartChange() {
+                const selectedPart = app.elements.activePart.value;
+                if (selectedPart === 'inne') {
+                    app.elements.activePartOther.style.display = 'block';
+                    app.elements.activePartOther.focus();
+                } else {
+                    app.elements.activePartOther.style.display = 'none';
+                }
+                if (app.therapeuticData.prompts[selectedPart]) {
+                    app.elements.therapeuticPrompts.textContent = app.therapeuticData.prompts[selectedPart];
+                    app.elements.therapeuticPrompts.style.display = 'block';
+                } else {
+                    app.elements.therapeuticPrompts.style.display = 'none';
+                }
+            }
+             function handleProblemImageChange() {
+                if (app.elements.problemImage.value === 'inne_obraz') {
+                    app.elements.problemImageOther.style.display = 'block';
+                    app.elements.problemImageOther.focus();
+                } else {
+                    app.elements.problemImageOther.style.display = 'none';
+                }
+            }
+
+
+            // --- Timer and Animation ---
+            function startTimer(duration) {
+                app.state.timeRemaining = duration;
                 updateTimerDisplay();
                 
                 app.state.timerId = setInterval(function() {
@@ -342,13 +683,12 @@
                         updateTimerDisplay();
                         
                         if (app.state.timeRemaining <= 0) {
-                            endSession();
+                            completeSession();
                         }
                     }
                 }, 1000);
             }
             
-            // Aktualizacja wyświetlacza timera
             function updateTimerDisplay() {
                 var minutes = Math.floor(app.state.timeRemaining / 60);
                 var seconds = app.state.timeRemaining % 60;
@@ -357,320 +697,343 @@
                     seconds.toString().padStart(2, '0');
             }
             
-            // Inicjalizacja audio
-            function setupAudio() {
-                // Próbujemy użyć Web Audio API
-                try {
-                    app.state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                } catch(e) {
-                    console.log('Web Audio API nie jest wspierane, używam alternatywnej metody');
-                }
-            }
-            
-            // Funkcja odtwarzająca dźwięk
-            function playSound(isLeft) {
-                // Jeśli dźwięk wyłączony lub pauza - nie odtwarzaj
-                if (!app.state.soundEnabled || app.state.isPaused) return;
-                
-                // Metoda 1: Web Audio API
-                if (app.state.audioContext) {
-                    try {
-                        var oscillator = app.state.audioContext.createOscillator();
-                        var gainNode = app.state.audioContext.createGain();
-                        
-                        // Ustawienia oscylatora
-                        oscillator.type = 'sine';
-                        oscillator.frequency.value = isLeft ? 400 : 500;
-                        
-                        // Głośność
-                        gainNode.gain.value = 0.1;
-                        
-                        // Stworzenie kontekstu stereo
-                        var panNode;
-                        if (app.state.audioContext.createStereoPanner) {
-                            panNode = app.state.audioContext.createStereoPanner();
-                            panNode.pan.value = isLeft ? -1.0 : 1.0; // -1 = lewy, 1 = prawy
-                        } else if (app.state.audioContext.createPanner) {
-                            // Alternatywna metoda dla starszych przeglądarek
-                            panNode = app.state.audioContext.createPanner();
-                            panNode.panningModel = 'equalpower';
-                            panNode.setPosition(isLeft ? -1 : 1, 0, 0);
-                        } else {
-                            // Fallback - bez stereo
-                            panNode = app.state.audioContext.createGain();
-                        }
-                        
-                        // Podłączenia
-                        oscillator.connect(gainNode);
-                        gainNode.connect(panNode);
-                        panNode.connect(app.state.audioContext.destination);
-                        
-                        // Odtwarzanie
-                        oscillator.start();
-                        
-                        // Zatrzymanie po krótkim czasie
-                        setTimeout(function() {
-                            oscillator.stop();
-                            // Odłączenie
-                            try {
-                                oscillator.disconnect();
-                                gainNode.disconnect();
-                                panNode.disconnect();
-                            } catch(e) {
-                                // Ignorujemy ewentualne błędy odłączania
-                            }
-                        }, 50);
-                    } catch(e) {
-                        console.log('Błąd odtwarzania dźwięku:', e);
-                        fallbackSound(isLeft);
-                    }
-                } 
-                // Metoda 2: Element Audio z mono do stereo
-                else {
-                    fallbackSound(isLeft);
-                }
-            }
-            
-            // Alternatywna metoda generowania dźwięku stereo
-            function fallbackSound(isLeft) {
-                try {
-                    // Tworzymy kontekst AudioContext na żądanie
-                    var tempContext = new (window.AudioContext || window.webkitAudioContext)();
-                    var oscillator = tempContext.createOscillator();
-                    var gainNode = tempContext.createGain();
-                    
-                    // Tworzymy kanał stereo
-                    var merger = tempContext.createChannelMerger(2);
-                    
-                    // Głośność
-                    gainNode.gain.value = 0.2;
-                    
-                    // Podłączenia - manipulujemy którym kanałem wysyłamy dźwięk
-                    oscillator.connect(gainNode);
-                    
-                    // Ustawienia częstotliwości
-                    oscillator.frequency.value = isLeft ? 400 : 500;
-                    
-                    if (isLeft) {
-                        // Lewy kanał
-                        gainNode.connect(merger, 0, 0);
-                    } else {
-                        // Prawy kanał
-                        gainNode.connect(merger, 0, 1);
-                    }
-                    
-                    merger.connect(tempContext.destination);
-                    
-                    // Odtwarzamy
-                    oscillator.start();
-                    
-                    // Zatrzymujemy po krótkim czasie
-                    setTimeout(function() {
-                        oscillator.stop();
-                        // Odłączamy
-                        try {
-                            oscillator.disconnect();
-                            gainNode.disconnect();
-                            merger.disconnect();
-                        } catch(e) {
-                            // Ignorujemy ewentualne błędy odłączania
-                        }
-                        
-                        // Zamykamy kontekst
-                        try {
-                            if (tempContext.close) {
-                                tempContext.close();
-                            }
-                        } catch(e) {
-                            // Ignorujemy błędy zamykania
-                        }
-                    }, 50);
-                } catch(e) {
-                    console.log('Fallback audio też nie działa:', e);
-                    // Ostateczny fallback - bez stereo
-                    try {
-                        var audio = new Audio();
-                        audio.volume = 0.2;
-                        audio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==";
-                        audio.play().catch(function(e) {
-                            console.log('Błąd odtwarzania dźwięku:', e);
-                        });
-                    } catch(e) {
-                        console.log('Wszystkie metody audio zawiodły:', e);
-                    }
-                }
-            }
-            
-            // Funkcja animująca kulkę
-            function startAnimation() {
-                var container = document.querySelector('.indicator-container');
+            function startAnimation(speedValue) { // speedValue is actually interval delay
+                var container = app.elements.indicatorContainer;
                 var containerWidth = container.offsetWidth;
                 var indicatorWidth = app.elements.indicator.offsetWidth;
-                var position = 0;
-                var direction = 1; // 1 = prawo, -1 = lewo
-                var speed = 12; // pikseli na klatkę
-                var wasAtEdge = false;
-                
+                // app.state.indicatorPosition = 0; // Reset position
+                // app.state.indicatorDirection = 1;
+                var speed = 2; // Base pixel movement per step. The 'speedValue' from select is used as interval delay.
+                               // A lower speedValue (from select "Szybko") means faster animation due to less delay.
+
                 function animate() {
                     if (!app.state.isPaused) {
-                        position += speed * direction;
+                        app.state.indicatorPosition += speed * app.state.indicatorDirection;
                         
-                        // Zmiana kierunku na krawędziach
-                        if (position >= containerWidth - indicatorWidth) {
-                            position = containerWidth - indicatorWidth;
-                            direction = -1;
-                            
-                            // Dźwięk przy prawej krawędzi
-                            if (!wasAtEdge) {
-                                playSound(false);
-                                wasAtEdge = true;
-                            }
-                        } else if (position <= 0) {
-                            position = 0;
-                            direction = 1;
-                            
-                            // Dźwięk przy lewej krawędzi
-                            if (!wasAtEdge) {
-                                playSound(true);
-                                wasAtEdge = true;
-                            }
-                        } else {
-                            wasAtEdge = false;
+                        let atEdge = false;
+                        if (app.state.indicatorPosition >= containerWidth - indicatorWidth) {
+                            app.state.indicatorPosition = containerWidth - indicatorWidth;
+                            app.state.indicatorDirection = -1;
+                            playSound(false); // false for right
+                            atEdge = true;
+                        } else if (app.state.indicatorPosition <= 0) {
+                            app.state.indicatorPosition = 0;
+                            app.state.indicatorDirection = 1;
+                            playSound(true); // true for left
+                            atEdge = true;
                         }
                         
-                        app.elements.indicator.style.left = position + 'px';
+                        app.elements.indicator.style.left = app.state.indicatorPosition + 'px';
                     }
-                    
-                    app.state.animationId = requestAnimationFrame(animate);
+                    // Use speedValue from settings as the effective 'speed' for setTimeout
+                    // A smaller speedValue (e.g., 8 for "Szybko") means animate is called more frequently.
+                    app.state.animationFrameId = setTimeout(() => requestAnimationFrame(animate), speedValue);
                 }
                 
-                app.state.animationId = requestAnimationFrame(animate);
+                // Clear any existing timeout before starting a new one
+                if (app.state.animationFrameId) clearTimeout(app.state.animationFrameId);
+                app.state.animationFrameId = setTimeout(() => requestAnimationFrame(animate), speedValue);
+            }
+
+            function stopAnimationAndTimers() {
+                clearInterval(app.state.timerId);
+                app.state.timerId = null;
+                if (app.state.animationFrameId) {
+                    clearTimeout(app.state.animationFrameId); // Use clearTimeout for setTimeout-based animation
+                    app.state.animationFrameId = null;
+                }
+                if (app.state.supportMessageIntervalId) {
+                    clearInterval(app.state.supportMessageIntervalId);
+                    app.state.supportMessageIntervalId = null;
+                    app.elements.supportMessageDisplay.classList.remove('visible');
+                }
+                if (app.state.breathingReminderIntervalId) {
+                    clearInterval(app.state.breathingReminderIntervalId);
+                    app.state.breathingReminderIntervalId = null;
+                    app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse');
+                }
+                app.state.isPaused = false; // Reset pause state
+                app.screens.session.style.backgroundColor = '#1e1e1e'; // Reset background
             }
             
-            // Zakończenie sesji
-            function endSession() {
-                // Czyszczenie timerów
-                clearInterval(app.state.timerId);
-                if (app.state.animationId) {
-                    cancelAnimationFrame(app.state.animationId);
-                }
+            function completeSession() {
+                stopAnimationAndTimers();
+                // Save current problem data before showing end screen
+                app.state.currentProblem.activePart = app.elements.activePart.value;
+                app.state.currentProblem.activePartOther = app.elements.activePartOther.value;
+                app.state.currentProblem.bodyLocation = app.elements.bodyLocation.value;
+                app.state.currentProblem.bodySensation = app.elements.bodySensation.value;
+                app.state.currentProblem.problemImage = app.elements.problemImage.value;
+                app.state.currentProblem.problemImageOther = app.elements.problemImageOther.value;
+                app.state.currentProblem.negativeCognition = app.elements.negativeCognition.value;
+                // sudPre is already set
                 
+                saveLastProblem(); // Save data of the just-completed session
                 showScreen('end');
             }
-            
-            // Aktualizacja wyników
-            function updateResults() {
-                if (app.state.preRating !== null && app.state.postRating !== null) {
-                    var diff = app.state.preRating - app.state.postRating;
-                    var diffText, emoji, color;
-                    
-                    if (diff > 3) {
-                        diffText = "Znaczne zmniejszenie o " + diff + " punktów";
-                        emoji = "🌟";
-                        color = "#4caf50";
-                    } else if (diff > 0) {
-                        diffText = "Zmniejszenie o " + diff + " punktów";
-                        emoji = "👍";
-                        color = "#8bc34a";
-                    } else if (diff === 0) {
-                        diffText = "Brak zmiany";
-                        emoji = "🔄";
-                        color = "#ffc107";
-                    } else {
-                        diffText = "Zwiększenie o " + Math.abs(diff) + " punktów";
-                        emoji = "📝";
-                        color = "#f44336";
+
+            // --- Audio ---
+            function setupAudio() {
+                if (!app.state.audioContext && app.state.settings.soundEnabled) {
+                    try {
+                        app.state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    } catch(e) {
+                        console.warn('Web Audio API nie jest wspierane.');
                     }
-                    
-                    app.elements.results.innerHTML = '<div style="background-color: #222; padding: 15px; border-radius: 10px;">' +
-                        '<p>' + emoji + ' <strong>Wyniki sesji:</strong></p>' +
-                        '<p>Napięcie przed: <strong>' + app.state.preRating + '/10</strong></p>' +
-                        '<p>Napięcie po: <strong>' + app.state.postRating + '/10</strong></p>' +
-                        '<p style="margin-top: 10px; color: ' + color + '"><strong>' + diffText + '</strong></p>' +
-                        '</div>';
                 }
             }
             
-            // ---- INICJALIZACJA EVENTÓW ----
+            function playSound(isLeft) {
+                if (!app.state.settings.soundEnabled || app.state.isPaused || !app.state.audioContext) return;
+                
+                try {
+                    var audioCtx = app.state.audioContext;
+                    var oscillator = audioCtx.createOscillator();
+                    var gainNode = audioCtx.createGain();
+                    var panner = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = isLeft ? 300 : 400; // Slightly lower frequencies
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Softer sound
+
+                    if (panner) {
+                        panner.pan.setValueAtTime(isLeft ? -1.0 : 1.0, audioCtx.currentTime);
+                        oscillator.connect(gainNode).connect(panner).connect(audioCtx.destination);
+                    } else { // Fallback for browsers not supporting StereoPanner
+                        oscillator.connect(gainNode).connect(audioCtx.destination);
+                    }
+                    
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.05); // Shorter sound
+                } catch(e) {
+                    console.error('Błąd odtwarzania dźwięku:', e);
+                }
+            }
             
-            // Przycisk Start
-            app.buttons.start.addEventListener('click', function() {
-                showScreen('rating');
+            // --- Supportive Messages & Breathing Reminder ---
+            function startSupportMessages() {
+                if (!app.state.settings.supportMessagesEnabled || app.state.supportMessageIntervalId) return;
+                
+                const showMsg = () => {
+                    if (app.state.isPaused) return;
+                    const randomIndex = Math.floor(Math.random() * app.therapeuticData.supportMessages.length);
+                    app.elements.supportMessageDisplay.textContent = app.therapeuticData.supportMessages[randomIndex];
+                    app.elements.supportMessageDisplay.classList.add('visible');
+                    setTimeout(() => {
+                        app.elements.supportMessageDisplay.classList.remove('visible');
+                    }, 4000); // Message visible for 4 seconds
+                };
+                showMsg(); // Show first message immediately
+                app.state.supportMessageIntervalId = setInterval(showMsg, 20000); // Then every 20 seconds
+            }
+
+            function startBreathingReminder() {
+                if (!app.state.settings.breathingReminderEnabled || app.state.breathingReminderIntervalId) return;
+                app.state.breathingReminderIntervalId = setInterval(() => {
+                    if (app.state.isPaused) return;
+                    app.elements.indicatorContainer.classList.add('breathing-reminder-pulse');
+                    setTimeout(() => {
+                        app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse');
+                    }, 5000); // Pulse for 5 seconds
+                }, 30000); // Every 30 seconds
+            }
+
+            // --- Results Display ---
+            function updateResultsDisplay() {
+                const { sudPre, sudPost, positiveCognition, voc } = app.state.currentProblem;
+                let html = '<div class="info-box" style="border-left-color: #ff5722;"><h3>Wyniki Sesji:</h3>';
+                let preText = sudPre !== null ? `${sudPre}/10` : 'N/A';
+                let postText = sudPost !== null ? `${sudPost}/10` : 'N/A';
+                html += `<p>Napięcie (SUD) przed: <strong>${preText}</strong></p>`;
+                html += `<p>Napięcie (SUD) po: <strong>${postText}</strong></p>`;
+
+                if (sudPre !== null && sudPost !== null) {
+                    const diff = sudPre - sudPost;
+                    let diffText, color;
+                    if (diff > 2) { diffText = `Znaczne zmniejszenie o ${diff} pkt.`; color = "#4caf50"; }
+                    else if (diff > 0) { diffText = `Zmniejszenie o ${diff} pkt.`; color = "#8bc34a"; }
+                    else if (diff === 0) { diffText = "Brak zmiany w SUD."; color = "#ffc107"; }
+                    else { diffText = `Zwiększenie o ${Math.abs(diff)} pkt.`; color = "#f44336"; }
+                    html += `<p style="color: ${color};"><strong>${diffText}</strong></p>`;
+                }
+
+                if (positiveCognition) {
+                    html += `<p style="margin-top:10px;">Pozytywne Przekonanie (PC): <strong>"${positiveCognition}"</strong></p>`;
+                    if (voc !== null) {
+                        html += `<p>Prawdziwość PC (VoC): <strong>${voc}/7</strong></p>`;
+                    }
+                }
+                html += '</div>';
+                app.elements.resultsDisplay.innerHTML = html;
+            }
+
+            // ---- EVENT LISTENERS ----
+            app.elements.soundToggle.addEventListener('change', function() {
+                app.state.settings.soundEnabled = this.checked;
+                saveSettings();
+                if (this.checked && !app.state.audioContext) setupAudio();
+            });
+            app.elements.supportMessagesToggle.addEventListener('change', function() {
+                app.state.settings.supportMessagesEnabled = this.checked;
+                saveSettings();
+            });
+            app.elements.breathingReminderToggle.addEventListener('change', function() {
+                app.state.settings.breathingReminderEnabled = this.checked;
+                saveSettings();
             });
             
-            // Przycisk Rozpocznij ruch wskaźnika
-            app.buttons.begin.addEventListener('click', function() {
-                if (app.state.preRating === null) {
-                    alert('Proszę wybrać poziom napięcia');
+            app.buttons.newSessionSetup.addEventListener('click', function() {
+                resetCurrentProblem();
+                showScreen('config');
+            });
+
+            app.buttons.quickStart.addEventListener('click', function() {
+                loadLastProblem();
+                if (app.state.lastProblem) {
+                    app.state.currentProblem = JSON.parse(JSON.stringify(app.state.lastProblem)); // Deep copy
+                    populatePreparationScreenFromProblem(app.state.currentProblem);
+                     // Make sure settings are applied if quick starting
+                    app.state.settings.duration = parseInt(app.elements.sessionDuration.value);
+                    app.state.settings.speed = parseInt(app.elements.indicatorSpeed.value); // speed is interval delay
+                    showScreen('preparation');
+                } else {
+                    alert("Brak danych z ostatniej sesji. Rozpocznij nową sesję.");
+                    resetCurrentProblem();
+                    showScreen('config');
+                }
+            });
+
+            app.elements.sessionDuration.addEventListener('change', function() {
+                app.state.settings.duration = parseInt(this.value);
+                saveSettings();
+            });
+            app.elements.indicatorSpeed.addEventListener('change', function() {
+                app.state.settings.speed = parseInt(this.value); // speed is interval delay
+                saveSettings();
+            });
+
+            app.buttons.goToPreparation.addEventListener('click', function() {
+                // Settings are already saved on change
+                showScreen('preparation');
+            });
+            
+            app.elements.activePart.addEventListener('change', handleActivePartChange);
+            app.elements.problemImage.addEventListener('change', handleProblemImageChange);
+
+
+            app.buttons.beginSession.addEventListener('click', function() {
+                if (app.state.currentProblem.sudPre === null) {
+                    alert('Proszę wybrać poziom napięcia (SUD) przed sesją.');
                     return;
                 }
-                
+                app.state.currentProblem.activePart = app.elements.activePart.value;
+                app.state.currentProblem.activePartOther = app.elements.activePartOther.value;
+                app.state.currentProblem.bodyLocation = app.elements.bodyLocation.value;
+                app.state.currentProblem.bodySensation = app.elements.bodySensation.value;
+                app.state.currentProblem.problemImage = app.elements.problemImage.value;
+                app.state.currentProblem.problemImageOther = app.elements.problemImageOther.value;
+                app.state.currentProblem.negativeCognition = app.elements.negativeCognition.value;
+
+                // Reset indicator position for a new session run
+                app.state.indicatorPosition = 0;
+                app.state.indicatorDirection = 1;
+                app.elements.indicator.style.left = '0px';
+
+
                 showScreen('session');
-                setupAudio();
-                startTimer();
-                startAnimation();
+                setupAudio(); // Ensure audio context is ready if sound is enabled
+                startTimer(app.state.settings.duration);
+                startAnimation(app.state.settings.speed); // speed is interval delay
+                if(app.state.settings.supportMessagesEnabled) startSupportMessages();
+                if(app.state.settings.breathingReminderEnabled) startBreathingReminder();
             });
-            
-            // Przycisk Zakończ sesję
-            app.buttons.stop.addEventListener('click', function() {
-                endSession();
+
+            app.buttons.stopSession.addEventListener('click', function() {
+                completeSession(); // This also stops timers and animation
             });
-            
-            // Przycisk Nowa sesja
-            app.buttons.newSession.addEventListener('click', function() {
-                // Reset stanu
-                app.state.preRating = null;
-                app.state.postRating = null;
+
+            app.buttons.continueSameTopic1min.addEventListener('click', function() {
+                app.state.settings.duration = 60;
+                // Retain currentProblem data, just run another BLS set
+                // SUD pre for this continuation could be the SUD post of the previous set
+                app.state.currentProblem.sudPre = app.state.currentProblem.sudPost; 
+                app.state.currentProblem.sudPost = null; // Reset post SUD for new run
+                app.state.currentProblem.voc = null; // Reset VoC
                 
-                // Reset UI
-                app.ratings.preButtons.forEach(function(btn) {
-                    btn.classList.remove('selected');
-                });
-                app.ratings.postButtons.forEach(function(btn) {
-                    btn.classList.remove('selected');
-                });
-                app.elements.results.innerHTML = '';
-                
-                showScreen('start');
+                // Reset indicator position for a new session run
+                app.state.indicatorPosition = 0;
+                app.state.indicatorDirection = 1;
+                app.elements.indicator.style.left = '0px';
+
+                showScreen('session');
+                startTimer(app.state.settings.duration);
+                startAnimation(app.state.settings.speed);
+                if(app.state.settings.supportMessagesEnabled) startSupportMessages();
+                if(app.state.settings.breathingReminderEnabled) startBreathingReminder();
+            });
+             app.buttons.continueSameTopic2min.addEventListener('click', function() {
+                app.state.settings.duration = 120;
+                app.state.currentProblem.sudPre = app.state.currentProblem.sudPost; 
+                app.state.currentProblem.sudPost = null;
+                app.state.currentProblem.voc = null;
+
+                app.state.indicatorPosition = 0;
+                app.state.indicatorDirection = 1;
+                app.elements.indicator.style.left = '0px';
+
+                showScreen('session');
+                startTimer(app.state.settings.duration);
+                startAnimation(app.state.settings.speed);
+                if(app.state.settings.supportMessagesEnabled) startSupportMessages();
+                if(app.state.settings.breathingReminderEnabled) startBreathingReminder();
+            });
+
+            app.buttons.startCompletelyNewSession.addEventListener('click', function() {
+                // Save completed problem before resetting
+                app.state.currentProblem.positiveCognition = app.elements.positiveCognition.value;
+                app.state.currentProblem.notes = app.elements.sessionNotes.value;
+                // observations are already in app.state.currentProblem.observations
+                saveLastProblem(); // Save the fully completed session
+
+                resetCurrentProblem();
+                showScreen('config'); // Go to config for a completely new session
             });
             
-            // Przyciski oceny początkowej
-            app.ratings.preButtons.forEach(function(button) {
-                button.addEventListener('click', function() {
-                    app.ratings.preButtons.forEach(function(btn) {
-                        btn.classList.remove('selected');
-                    });
-                    this.classList.add('selected');
-                    app.state.preRating = parseInt(this.getAttribute('data-value'));
-                });
-            });
-            
-            // Przyciski oceny końcowej
-            app.ratings.postButtons.forEach(function(button) {
-                button.addEventListener('click', function() {
-                    app.ratings.postButtons.forEach(function(btn) {
-                        btn.classList.remove('selected');
-                    });
-                    this.classList.add('selected');
-                    app.state.postRating = parseInt(this.getAttribute('data-value'));
-                    updateResults();
-                });
-            });
-            
-            // Przełącznik dźwięku
-            app.elements.soundToggle.addEventListener('change', function() {
-                app.state.soundEnabled = this.checked;
-            });
-            
-            // Pauza/wznowienie na kliknięcie ekranu sesji
             app.screens.session.addEventListener('click', function(e) {
-                // Ignoruj kliknięcie na przycisk stop
-                if (e.target === app.buttons.stop) return;
+                if (e.target === app.buttons.stopSession || e.target.parentElement === app.elements.indicatorContainer) return;
                 
                 app.state.isPaused = !app.state.isPaused;
                 app.screens.session.style.backgroundColor = 
-                    app.state.isPaused ? '#2d1d30' : '#121212';
+                    app.state.isPaused ? '#2d1d30' : '#1e1e1e'; // Visual feedback for pause
+                
+                if (app.state.isPaused) {
+                    if (app.state.supportMessageIntervalId) clearInterval(app.state.supportMessageIntervalId);
+                    if (app.state.breathingReminderIntervalId) clearInterval(app.state.breathingReminderIntervalId);
+                     app.elements.indicatorContainer.classList.remove('breathing-reminder-pulse');
+
+                } else {
+                    if(app.state.settings.supportMessagesEnabled) startSupportMessages(); // Restart if it was running
+                    if(app.state.settings.breathingReminderEnabled) startBreathingReminder(); // Restart if it was running
+                }
             });
+
+             app.elements.positiveCognition.addEventListener('input', function() {
+                app.state.currentProblem.positiveCognition = this.value;
+                updateResultsDisplay();
+            });
+            app.elements.sessionNotes.addEventListener('input', function() {
+                app.state.currentProblem.notes = this.value;
+            });
+
+            // --- INITIALIZATION ---
+            loadSettings();
+            loadLastProblem(); // Load last problem data for potential quick start
+            createRatingButtons(app.elements.sudPreButtonsContainer, 10, 'sudPre');
+            createRatingButtons(app.elements.sudPostButtonsContainer, 10, 'sudPost');
+            createRatingButtons(app.elements.vocRatingButtonsContainer, 7, 'voc', true);
+            createObservationCheckboxes();
+            resetCurrentProblem(); // Initialize with empty problem state
+            showScreen('start');
         };
     </script>
 </body>
